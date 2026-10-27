@@ -1,0 +1,368 @@
+/* ============================================================
+   ACCOUNT — frontend-only client space
+   ============================================================ */
+
+.account-hero {
+  padding-bottom: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.account-body {
+  padding-top: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.account-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
+  gap: clamp(1.5rem, 3.2vw, 2.75rem);
+}
+
+.account-main {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+/* ------------------------------ Banner ------------------------------ */
+
+.account-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: clamp(1.15rem, 2.4vw, 1.6rem);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(180 19 94 / 0.08), transparent 46%),
+    var(--wine-50);
+  border: 1px solid var(--wine-100);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+
+.account-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--wine-200);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+}
+
+.account-banner h2 {
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+}
+
+.account-banner p {
+  margin-top: var(--space-2);
+  max-width: 68ch;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.account-banner .section-link {
+  margin-top: var(--space-2);
+  min-height: 36px;
+}
+
+/* ------------------------------ Panels ------------------------------ */
+
+.account-panel {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(1.15rem, 2.4vw, 1.75rem);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.account-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.account-panel__head .eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.account-panel__head h2 {
+  font-size: var(--text-xl);
+  letter-spacing: -0.025em;
+}
+
+.account-panel__intro {
+  max-width: 68ch;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.account-prefs {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.account-stats > div {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+}
+
+.account-stats dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-stats dd {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.account-stats dd.account-stats__text {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.account-panel__delivery {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.account-panel__delivery svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--color-accent);
+}
+
+/* ------------------------------ Future features ------------------------------ */
+
+.account-future {
+  display: grid;
+  gap: 0;
+}
+
+.account-future li {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.account-future li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.account-future li:last-child {
+  padding-bottom: 0;
+}
+
+.account-future__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--wine-50);
+  border: 1px solid var(--wine-100);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+}
+
+.account-future h3 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.015em;
+}
+
+.account-future p {
+  margin-top: 0.2rem;
+  max-width: 60ch;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/* ------------------------------ Sidebar ------------------------------ */
+
+.account-side {
+  display: grid;
+  gap: var(--space-4);
+  position: sticky;
+  top: calc(var(--header-h) + 1.25rem);
+}
+
+.account-side__card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.account-side__card h2 {
+  font-size: var(--text-lg);
+  letter-spacing: -0.02em;
+}
+
+.account-links {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0 calc(var(--space-5) * -1);
+}
+
+.account-links a {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.4rem var(--space-5);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transition:
+    background-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
+}
+
+.account-links a:hover {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.account-links a > svg:first-child {
+  color: var(--color-text-muted);
+}
+
+.account-links a:hover > svg:first-child {
+  color: var(--color-accent);
+}
+
+.account-links__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.3rem;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-size: 0.66rem;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.account-side__caption {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.account-side__card--dark {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(224 68 141 / 0.24), transparent 52%),
+    linear-gradient(150deg, var(--wine-900), var(--wine-950));
+  border-color: var(--wine-800);
+  color: var(--color-text-inverse);
+}
+
+.account-side__card--dark h2 {
+  color: #fff;
+  font-size: var(--text-xl);
+}
+
+.account-side__card--dark p {
+  color: var(--color-text-inverse-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.account-side__card--dark .btn {
+  justify-self: start;
+}
+
+/* ------------------------------ Responsive ------------------------------ */
+
+@media (max-width: 960px) {
+  .account-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-side {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .account-banner {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .account-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-future li {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .account-future li > .badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .account-side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .account-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
