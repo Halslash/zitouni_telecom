@@ -21,7 +21,7 @@ export default function SectionHeader({
   id,
 }: SectionHeaderProps) {
   return (
-    <Reveal className="section-head" distance={20}>
+    <Reveal className="section-head">
       <div className="section-head__copy">
         {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h2 id={id}>{title}</h2>

@@ -10,12 +10,11 @@ const mockProduct: Product = {
   category: 'smartphones',
   price: 50000,
   image: '/test.jpg',
-  images: ['/test.jpg'],
-  description: 'A test product',
-  specs: {},
-  inStock: true,
-  rating: 4.5,
-  reviewCount: 10,
+  colors: [{ name: 'Noir', hex: '#000000' }],
+  variants: [
+    { name: '128 Go', price: 50000 },
+    { name: '256 Go', price: 60000 },
+  ],
 };
 
 // Clear localStorage before each test
@@ -124,56 +123,52 @@ describe('CartContext', () => {
     expect(result.current.state.total).toBe(0);
   });
 
-  it('keeps variants as separate lines', () => {
+  it('keeps variants as separate lines and prices them from the catalogue', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
       result.current.add(mockProduct, 1, {
-        storage: '256 Go',
+        variant: '128 Go',
         color: 'Noir',
       });
       result.current.add(mockProduct, 1, {
-        storage: '512 Go',
+        variant: '256 Go',
         color: 'Noir',
       });
       result.current.add(mockProduct);
     });
 
     expect(result.current.state.items).toHaveLength(3);
-    expect(result.current.state.total).toBe(150000);
+    expect(result.current.state.total).toBe(160000);
 
     const firstVariant = result.current.state.items.find(
-      (item) => item.variant?.storage === '256 Go'
+      (item) => item.variant?.variant === '128 Go'
     );
-    expect(firstVariant?.lineId).toBe('test-product::256 Go::Noir');
+    expect(firstVariant?.lineId).toBe('test-product::128 Go::Noir');
 
     act(() => {
       result.current.remove(firstVariant!.lineId);
     });
 
     expect(result.current.state.items).toHaveLength(2);
+    expect(result.current.state.total).toBe(110000);
   });
 
-  it('clamps quantities to stock', () => {
-    const limitedProduct: Product = { ...mockProduct, stockCount: 2 };
+  it('caps quantities at 99', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     act(() => {
-      result.current.add(limitedProduct, 5);
+      result.current.add(mockProduct, 120);
     });
 
-    expect(result.current.state.items[0].quantity).toBe(2);
-    expect(result.current.state.total).toBe(100000);
+    expect(result.current.state.items[0].quantity).toBe(99);
+    expect(result.current.state.total).toBe(4950000);
 
     act(() => {
-      result.current.add(limitedProduct, 1);
+      result.current.updateQuantity('test-product', 200);
     });
 
-    act(() => {
-      result.current.updateQuantity('test-product', 99);
-    });
-
-    expect(result.current.state.items[0].quantity).toBe(2);
+    expect(result.current.state.items[0].quantity).toBe(99);
   });
 
   it('sanitizes persisted cart data and rehydrates the catalogue', () => {
@@ -182,14 +177,14 @@ describe('CartContext', () => {
       JSON.stringify([
         {
           product: {
-            id: 'iphone-16-pro-max',
+            id: 'galaxy-s25-ultra',
             name: 'Injected name',
             price: 1,
           },
           quantity: '2',
         },
         {
-          product: { id: 'iphone-16-pro-max' },
+          product: { id: 'galaxy-s25-ultra' },
           quantity: 2,
         },
         { product: { id: 'missing-product' }, quantity: 1 },
@@ -201,26 +196,26 @@ describe('CartContext', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     expect(result.current.state.items).toHaveLength(1);
-    expect(result.current.state.items[0].lineId).toBe('iphone-16-pro-max');
-    expect(result.current.state.items[0].product.name).toBe('iPhone 16 Pro Max');
-    expect(result.current.state.items[0].product.price).toBe(299900);
+    expect(result.current.state.items[0].lineId).toBe('galaxy-s25-ultra');
+    expect(result.current.state.items[0].product.name).toBe('Galaxy S25 Ultra');
+    expect(result.current.state.items[0].product.price).toBe(279900);
     expect(result.current.state.items[0].quantity).toBe(4);
-    expect(result.current.state.total).toBe(1199600);
+    expect(result.current.state.total).toBe(1119600);
   });
 
-  it('drops invalid persisted variants and clamps stock', () => {
+  it('drops invalid persisted variants and caps quantities', () => {
     localStorage.setItem(
       'zitouni-cart',
       JSON.stringify([
         {
-          product: { id: 'iphone-16-pro-max' },
-          quantity: 99,
-          variant: { storage: '512 Go', color: 'Titane noir' },
+          product: { id: 'galaxy-s25-ultra' },
+          quantity: 150,
+          variant: { variant: '512 Go', color: 'Titane noir' },
         },
         {
-          product: { id: 'iphone-16-pro-max' },
+          product: { id: 'galaxy-s25-ultra' },
           quantity: 1,
-          variant: { storage: '1 To', color: 'Injected colour' },
+          variant: { variant: '1 To', color: 'Injected colour' },
         },
       ])
     );
@@ -228,14 +223,15 @@ describe('CartContext', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
 
     expect(result.current.state.items).toHaveLength(2);
-    expect(result.current.state.items[0].quantity).toBe(12);
+    expect(result.current.state.items[0].quantity).toBe(99);
     expect(result.current.state.items[0].variant).toEqual({
-      storage: '512 Go',
+      variant: '512 Go',
       color: 'Titane noir',
     });
     expect(result.current.state.items[1].variant).toEqual({
-      storage: '1 To',
+      variant: '1 To',
       color: undefined,
     });
+    expect(result.current.state.total).toBe(31030000);
   });
 });

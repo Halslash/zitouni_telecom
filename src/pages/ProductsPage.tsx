@@ -35,7 +35,6 @@ import {
   getCategoryBySlug,
   getCategoryCount,
   getProductsByCategory,
-  getSaleProducts,
   products,
   searchProducts,
   type Product,
@@ -190,7 +189,6 @@ export default function ProductsPage() {
   const dialogTitleId = useId();
 
   const pathname = location.pathname.replace(/\/+$/, '') || '/';
-  const isPromotions = pathname === '/promotions';
   const pathCategory = categories.find(
     (category) => CATEGORY_PATHS[category.id] === pathname
   );
@@ -258,12 +256,6 @@ export default function ProductsPage() {
       ? getProductsByCategory(routeCategory.id)
       : products;
 
-    if (isPromotions) {
-      source = source.filter(
-        (product) => product.originalPrice !== undefined
-      );
-    }
-
     if (query) {
       const matchingIds = new Set(
         searchProducts(query).map((product) => product.id)
@@ -277,22 +269,19 @@ export default function ProductsPage() {
     );
 
     return sortProducts(source, sortId);
-  }, [routeCategory, isPromotions, query, priceId, sortId]);
+  }, [routeCategory, query, priceId, sortId]);
 
   const hasFilters = query.length > 0 || priceId !== 'all';
   const activeFilterCount =
     (query ? 1 : 0) + (priceId !== 'all' ? 1 : 0);
-  const saleCount = getSaleProducts().length;
-  const gridKey = `${routeCategory?.id ?? 'all'}|${
-    isPromotions ? 'promo' : 'all'
-  }|${query}|${priceId}|${sortId}`;
+  const gridKey = `${routeCategory?.id ?? 'all'}|${query}|${priceId}|${sortId}`;
 
   const navItems: CatalogNavItem[] = [
     {
       to: '/produits',
       label: 'Tous les produits',
       count: products.length,
-      active: !routeCategory && !isPromotions,
+      active: !routeCategory,
     },
     ...categories.map((category) => ({
       to: CATEGORY_PATHS[category.id],
@@ -300,32 +289,20 @@ export default function ProductsPage() {
       count: getCategoryCount(category.id),
       active: routeCategory?.id === category.id,
     })),
-    {
-      to: '/promotions',
-      label: 'Promotions',
-      count: saleCount,
-      active: isPromotions,
-    },
   ];
 
   const heading = routeCategory
     ? routeCategory.name
-    : isPromotions
-      ? 'Promotions'
-      : query
-        ? `Résultats pour « ${query} »`
-        : 'Tous les produits';
+    : query
+      ? `Résultats pour « ${query} »`
+      : 'Tous les produits';
 
   const description = routeCategory
     ? routeCategory.intro
-    : isPromotions
-      ? 'Les remises du moment sur des produits neufs et garantis. Le prix barré correspond au prix de référence du catalogue.'
-      : 'Smartphones, ordinateurs, tablettes, gaming et accessoires : comparez les références disponibles et choisissez selon votre usage et votre budget.';
+    : 'Smartphones, ordinateurs, tablettes, gaming et accessoires : comparez les références disponibles et choisissez selon votre usage et votre budget.';
 
   usePageTitle(
-    query && !routeCategory && !isPromotions
-      ? `Recherche : ${query}`
-      : heading
+    query && !routeCategory ? `Recherche : ${query}` : heading
   );
 
   const updateParams = (
@@ -360,15 +337,13 @@ export default function ProductsPage() {
               <span className="breadcrumb__sep" aria-hidden="true">
                 /
               </span>
-              {routeCategory || isPromotions ? (
+              {routeCategory ? (
                 <>
                   <Link to="/produits">Boutique</Link>
                   <span className="breadcrumb__sep" aria-hidden="true">
                     /
                   </span>
-                  <span aria-current="page">
-                    {isPromotions ? 'Promotions' : routeCategory?.name}
-                  </span>
+                  <span aria-current="page">{routeCategory.name}</span>
                 </>
               ) : (
                 <span aria-current="page">
@@ -384,11 +359,7 @@ export default function ProductsPage() {
           </div>
 
           <span className="eyebrow">
-            {isPromotions
-              ? 'Offres en cours'
-              : routeCategory
-                ? 'Collection'
-                : 'Catalogue'}
+            {routeCategory ? 'Collection' : 'Catalogue'}
           </span>
           <h1 className="page-hero__title">{heading}</h1>
           <p className="page-hero__desc">{description}</p>

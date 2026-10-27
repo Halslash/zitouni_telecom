@@ -27,14 +27,12 @@ const CATEGORY_ICONS: Record<Category, ComponentType<IconProps>> = {
 
 interface CategoryCardProps {
   category: CategoryInfo;
-  index: number;
   size?: 'feature' | 'wide' | 'compact';
   className?: string;
 }
 
 export default function CategoryCard({
   category,
-  index,
   size = 'compact',
   className,
 }: CategoryCardProps) {
@@ -52,20 +50,14 @@ export default function CategoryCard({
       }`}
       viewTransition
     >
-      <span className="category-card__glow" aria-hidden="true" />
       <span className="category-card__glyph" aria-hidden="true">
-        <Icon size={210} strokeWidth={0.85} />
+        <Icon size={220} strokeWidth={0.8} />
       </span>
 
       <div className="category-card__body">
-        <div className="category-card__topline">
-          <span className="category-card__index">
-            Collection {String(index + 1).padStart(2, '0')}
-          </span>
-          <span className="category-card__count">
-            {count} référence{count > 1 ? 's' : ''}
-          </span>
-        </div>
+        <span className="category-card__count">
+          {count} référence{count > 1 ? 's' : ''}
+        </span>
 
         <div className="category-card__copy">
           <h3 className="category-card__name">{category.name}</h3>

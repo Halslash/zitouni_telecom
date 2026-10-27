@@ -5,10 +5,14 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import { getProductById, type Product } from '../data/products';
+import {
+  getProductById,
+  getVariantPrice,
+  type Product,
+} from '../data/products';
 
 export interface ProductVariant {
-  storage?: string;
+  variant?: string;
   color?: string;
 }
 
@@ -45,16 +49,11 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function lineIdFor(productId: string, variant?: ProductVariant): string {
-  if (!variant?.storage && !variant?.color) return productId;
-  return `${productId}::${variant.storage ?? ''}::${variant.color ?? ''}`;
-}
+const MAX_QUANTITY = 99;
 
-function stockLimit(product: Product): number {
-  return typeof product.stockCount === 'number' &&
-    Number.isFinite(product.stockCount)
-    ? Math.max(0, Math.floor(product.stockCount))
-    : 99;
+function lineIdFor(productId: string, variant?: ProductVariant): string {
+  if (!variant?.variant && !variant?.color) return productId;
+  return `${productId}::${variant.variant ?? ''}::${variant.color ?? ''}`;
 }
 
 function sanitizeVariant(
@@ -63,18 +62,20 @@ function sanitizeVariant(
 ): ProductVariant | undefined {
   if (!value || typeof value !== 'object') return undefined;
   const raw = value as Record<string, unknown>;
-  const storage =
-    typeof raw.storage === 'string' &&
-    (!product.storageOptions || product.storageOptions.includes(raw.storage))
-      ? raw.storage
+  const variant =
+    typeof raw.variant === 'string' &&
+    (!product.variants ||
+      product.variants.some((option) => option.name === raw.variant))
+      ? raw.variant
       : undefined;
   const color =
     typeof raw.color === 'string' &&
-    (!product.colors || product.colors.some((option) => option.name === raw.color))
+    (!product.colors ||
+      product.colors.some((option) => option.name === raw.color))
       ? raw.color
       : undefined;
 
-  return storage || color ? { storage, color } : undefined;
+  return variant || color ? { variant, color } : undefined;
 }
 
 function sanitizeCart(raw: unknown): CartItem[] {
@@ -96,11 +97,10 @@ function sanitizeCart(raw: unknown): CartItem[] {
     // Rehydrate from the catalogue so storage cannot inject stale prices,
     // deleted products, or arbitrary product shapes.
     const product = getProductById(productId);
-    if (!product || !product.inStock) continue;
+    if (!product) continue;
 
-    const max = stockLimit(product);
     const quantity = Math.floor(Number(candidate.quantity));
-    if (max === 0 || !Number.isFinite(quantity) || quantity <= 0) continue;
+    if (!Number.isFinite(quantity) || quantity <= 0) continue;
 
     const variant = sanitizeVariant(product, candidate.variant);
     const lineId = lineIdFor(product.id, variant);
@@ -109,7 +109,10 @@ function sanitizeCart(raw: unknown): CartItem[] {
     items.set(lineId, {
       lineId,
       product,
-      quantity: Math.min(max, (existing?.quantity ?? 0) + quantity),
+      quantity: Math.min(
+        MAX_QUANTITY,
+        (existing?.quantity ?? 0) + quantity
+      ),
       variant,
     });
   }
@@ -119,7 +122,9 @@ function sanitizeCart(raw: unknown): CartItem[] {
 
 function calculateTotal(items: CartItem[]): number {
   return items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) =>
+      sum +
+      getVariantPrice(item.product, item.variant?.variant) * item.quantity,
     0
   );
 }
@@ -127,13 +132,8 @@ function calculateTotal(items: CartItem[]): number {
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD': {
-      if (!action.product.inStock) return state;
-
       const variant = sanitizeVariant(action.product, action.variant);
       const lineId = lineIdFor(action.product.id, variant);
-      const max = stockLimit(action.product);
-      if (max === 0) return state;
-
       const requested = Math.floor(Number(action.quantity));
       const quantityToAdd = Number.isFinite(requested)
         ? Math.max(1, requested)
@@ -149,7 +149,10 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           index === existingIndex
             ? {
                 ...item,
-                quantity: Math.min(max, item.quantity + quantityToAdd),
+                quantity: Math.min(
+                  MAX_QUANTITY,
+                  item.quantity + quantityToAdd
+                ),
               }
             : item
         );
@@ -159,7 +162,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           {
             lineId,
             product: action.product,
-            quantity: Math.min(max, quantityToAdd),
+            quantity: Math.min(MAX_QUANTITY, quantityToAdd),
             variant,
           },
         ];
@@ -189,15 +192,11 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         return { items: newItems, total: calculateTotal(newItems) };
       }
 
-      const max = stockLimit(current.product);
-      const quantity = Math.min(max, requested);
+      const quantity = Math.min(MAX_QUANTITY, requested);
 
-      const newItems =
-        quantity <= 0
-          ? state.items.filter((item) => item.lineId !== action.lineId)
-          : state.items.map((item) =>
-              item.lineId === action.lineId ? { ...item, quantity } : item
-            );
+      const newItems = state.items.map((item) =>
+        item.lineId === action.lineId ? { ...item, quantity } : item
+      );
 
       return { items: newItems, total: calculateTotal(newItems) };
     }

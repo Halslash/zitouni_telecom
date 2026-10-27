@@ -1,10 +1,10 @@
 .quantity {
   display: inline-flex;
   align-items: stretch;
-  height: 46px;
+  height: 44px;
   background: var(--color-bg);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   transition:
     border-color var(--t-fast) var(--ease-out),
     box-shadow var(--t-fast) var(--ease-out);
@@ -19,8 +19,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 100%;
+  width: 44px;
+  height: calc(100% + 2px);
+  margin-block: -1px;
   padding: 0;
   background: transparent;
   border: 0;
@@ -47,13 +48,13 @@
 }
 
 .quantity__input {
-  width: 42px;
+  width: 40px;
   padding: 0;
   background: transparent;
   border: 0;
   color: var(--color-text);
   font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   text-align: center;
   font-variant-numeric: tabular-nums;
   appearance: textfield;
@@ -70,14 +71,14 @@
 }
 
 .quantity--sm {
-  height: 40px;
+  height: 44px;
 }
 
 .quantity--sm .quantity__button {
-  width: 36px;
+  width: 44px;
 }
 
 .quantity--sm .quantity__input {
-  width: 34px;
-  font-size: var(--text-xs);
+  width: 32px;
+  font-size: var(--text-sm);
 }

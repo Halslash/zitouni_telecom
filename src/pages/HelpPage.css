@@ -39,7 +39,7 @@
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
@@ -53,12 +53,12 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  min-height: 38px;
+  min-height: 44px;
   padding: 0.25rem 0.35rem;
   border-radius: var(--radius-xs);
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-body-strong);
   transition:
     background-color var(--t-fast) var(--ease-out),
     color var(--t-fast) var(--ease-out);
@@ -70,9 +70,9 @@
 }
 
 .help-toc__index {
-  color: var(--color-text-faint);
+  color: var(--color-text-muted);
   font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
 }
@@ -81,11 +81,9 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-4);
-  background:
-    radial-gradient(circle at 100% 0%, rgb(180 19 94 / 0.07), transparent 50%),
-    var(--wine-50);
-  border: 1px solid var(--wine-100);
-  border-radius: var(--radius-md);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-100);
+  border-radius: var(--radius-surface);
 }
 
 .help-aside__icon {
@@ -146,17 +144,17 @@
 }
 
 .help-section__index {
-  color: var(--wine-200);
+  color: var(--brand-400);
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 2.9rem);
-  font-weight: var(--weight-bold);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.06em;
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
 
 .help-section__head h2 {
-  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  font-size: var(--text-heading);
   letter-spacing: var(--tracking-heading);
 }
 
@@ -200,7 +198,7 @@
 .help-delivery__label {
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -208,7 +206,7 @@
 .help-delivery__estimate strong {
   font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.02em;
 }
 
@@ -254,7 +252,7 @@
 .help-table thead th {
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -266,7 +264,7 @@
 }
 
 .help-table tbody th {
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
 }
 
 .help-table__zone {
@@ -309,7 +307,7 @@
   color: var(--color-accent);
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.04em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -386,7 +384,7 @@
 
 .help-check h3 {
   font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: 0;
 }
 
@@ -491,7 +489,7 @@
   border-radius: 50%;
   color: var(--color-primary);
   font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
 }
 
 .help-procedure > p {
@@ -533,7 +531,7 @@
   padding: 0.85rem 1.1rem;
   color: var(--color-text);
   font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.01em;
   line-height: 1.4;
   list-style: none;
@@ -574,11 +572,9 @@
   grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
   gap: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 0% 0%, rgb(224 68 141 / 0.22), transparent 52%),
-    linear-gradient(145deg, var(--wine-900), var(--wine-950));
-  border: 1px solid var(--wine-800);
-  border-radius: var(--radius-md);
+  background: var(--brand-950);
+  border: 1px solid var(--brand-900);
+  border-radius: var(--radius-panel);
   color: var(--color-text-inverse);
 }
 
@@ -587,13 +583,13 @@
 }
 
 .help-contact__main .eyebrow {
-  color: var(--fuchsia-300);
+  color: var(--brand-300);
 }
 
 .help-contact__main h3 {
   max-width: 22ch;
   color: #fff;
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-size: var(--text-lg);
   letter-spacing: -0.028em;
 }
 
@@ -630,14 +626,14 @@
 .help-contact__details svg {
   flex-shrink: 0;
   margin-top: 0.15rem;
-  color: var(--fuchsia-300);
+  color: var(--brand-300);
 }
 
 .help-contact__details strong {
   display: block;
   color: #fff;
   font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
 }
 
 .help-contact__details span {
@@ -693,7 +689,7 @@
   color: var(--color-text);
   font-family: var(--font-display);
   font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.015em;
 }
 
@@ -724,11 +720,11 @@
   }
 
   .help-toc nav a {
-    min-height: 36px;
+    min-height: 44px;
     padding: 0.25rem 0.6rem;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-control);
     font-size: var(--text-xs);
     white-space: nowrap;
   }
@@ -772,7 +768,7 @@
   }
 
   .help-section__index {
-    font-size: 1.65rem;
+    font-size: var(--text-heading);
   }
 }
 

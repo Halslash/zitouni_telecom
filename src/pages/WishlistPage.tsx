@@ -47,16 +47,16 @@ export default function WishlistPage() {
       Boolean(product)
     );
 
-  const availableProducts = savedProducts.filter(
-    (product) => product.inStock
-  );
+  const availableProducts = savedProducts;
   const availableValue = availableProducts.reduce(
     (sum, product) => sum + product.price,
     0
   );
 
   const handleAddAll = () => {
-    availableProducts.forEach((product) => add(product));
+    availableProducts.forEach((product) =>
+      add(product, 1, { variant: product.variants?.[0]?.name })
+    );
     setAddedCount(availableProducts.length);
   };
 
@@ -112,7 +112,7 @@ export default function WishlistPage() {
               </span>
               <span>
                 <ShoppingBagIcon size={15} />
-                {formatPrice(availableValue)} de produits disponibles
+                {formatPrice(availableValue)} de sélection
               </span>
             </div>
           )}
@@ -137,9 +137,6 @@ export default function WishlistPage() {
                   Découvrir le catalogue
                   <ArrowRightIcon size={16} />
                 </Link>
-                <Link to="/promotions" className="btn btn--outline">
-                  Voir les promotions
-                </Link>
               </div>
             </div>
           ) : (
@@ -151,11 +148,7 @@ export default function WishlistPage() {
                     dans votre liste de favoris
                   </p>
                   <span>
-                    {availableProducts.length > 0
-                      ? `${availableProducts.length} disponible${
-                          availableProducts.length > 1 ? 's' : ''
-                        } à l'achat`
-                      : 'Aucun produit disponible pour le moment'}
+                    {formatItemCount(savedProducts.length)} dans votre liste
                   </span>
                 </div>
 
@@ -164,7 +157,6 @@ export default function WishlistPage() {
                     type="button"
                     className="btn btn--primary btn--sm"
                     onClick={handleAddAll}
-                    disabled={availableProducts.length === 0}
                   >
                     <ShoppingBagIcon size={15} />
                     Tout ajouter au panier

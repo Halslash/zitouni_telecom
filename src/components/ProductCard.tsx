@@ -5,13 +5,8 @@ import {
   useMotionTokens,
   useShouldReduceMotion,
 } from '@animate-ui/react/utils/motion';
-import {
-  getCategoryById,
-  getDiscountPercent,
-  getProductHighlight,
-  type Product,
-} from '../data/products';
-import { formatPrice, getStockState } from '../lib/format';
+import { getProductHighlight, type Product } from '../data/products';
+import { formatPrice } from '../lib/format';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { CheckIcon, HeartIcon, PlusIcon } from './Icons';
@@ -42,22 +37,10 @@ export default function ProductCard({
     };
   }, []);
 
-  const category = getCategoryById(product.category);
-  const discount = getDiscountPercent(product);
-  const stock = getStockState(product);
   const isWishlisted = wishlist.has(product.id);
 
-  const badge = discount
-    ? { label: `−${discount}\u00a0%`, modifier: 'badge--sale' }
-    : product.badge === 'new'
-      ? { label: 'Nouveau', modifier: 'badge--new' }
-      : product.badge === 'bestseller'
-        ? { label: 'Best-seller', modifier: 'badge--bestseller' }
-        : null;
-
   const handleAdd = () => {
-    if (!product.inStock) return;
-    add(product);
+    add(product, 1, { variant: product.variants?.[0]?.name });
     setAdded(true);
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => setAdded(false), 1800);
@@ -73,12 +56,6 @@ export default function ProductCard({
           alt={product.name}
           category={product.category}
         />
-
-        {badge && (
-          <span className={`badge ${badge.modifier} product-card__badge`}>
-            {badge.label}
-          </span>
-        )}
 
         <button
           type="button"
@@ -113,10 +90,7 @@ export default function ProductCard({
       </div>
 
       <div className="product-card__body">
-        <div className="product-card__topline">
-          <span className="product-card__brand">{product.brand}</span>
-          <span className="product-card__category">{category?.name}</span>
-        </div>
+        <span className="product-card__brand">{product.brand}</span>
 
         <h3 className="product-card__name">
           <Link
@@ -132,49 +106,37 @@ export default function ProductCard({
           {getProductHighlight(product)}
         </p>
 
-        <div className="product-card__stock">
-          <span className={`availability ${stock.modifier}`}>{stock.label}</span>
-        </div>
-
         <div className="product-card__footer">
-          <div className="price">
-            {product.originalPrice && (
-              <span className="price__old">
-                {formatPrice(product.originalPrice)}
-              </span>
-            )}
-            <span className="price__now">{formatPrice(product.price)}</span>
+          <div className="product-card__price-row">
+            <div className="price">
+              <span className="price__now">{formatPrice(product.price)}</span>
+            </div>
+
+            <button
+              type="button"
+              className={`product-card__add${added ? ' is-added' : ''}`}
+              onClick={handleAdd}
+              aria-label={
+                added
+                  ? `${product.name} ajouté au panier`
+                  : `Ajouter ${product.name} au panier`
+              }
+            >
+              <m.span
+                key={added ? 'added' : 'add'}
+                className="product-card__add-content"
+                initial={{
+                  opacity: 0,
+                  y: reduceMotion ? 0 : 3,
+                }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={transition.fade}
+              >
+                {added ? <CheckIcon size={15} /> : <PlusIcon size={15} />}
+              </m.span>
+            </button>
           </div>
 
-          <button
-            type="button"
-            className={`product-card__add${added ? ' is-added' : ''}`}
-            onClick={handleAdd}
-            disabled={!product.inStock}
-            aria-label={
-              added
-                ? `${product.name} ajouté au panier`
-                : product.inStock
-                  ? `Ajouter ${product.name} au panier`
-                  : `${product.name} est épuisé`
-            }
-          >
-            <m.span
-              key={added ? 'added' : product.inStock ? 'add' : 'out'}
-              className="product-card__add-content"
-              initial={{
-                opacity: 0,
-                y: reduceMotion ? 0 : 3,
-              }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={transition.fade}
-            >
-              {added ? <CheckIcon size={15} /> : <PlusIcon size={15} />}
-              <span>
-                {added ? 'Ajouté' : product.inStock ? 'Ajouter' : 'Épuisé'}
-              </span>
-            </m.span>
-          </button>
           <span className="visually-hidden" role="status" aria-live="polite">
             {added ? `${product.name} ajouté au panier` : ''}
           </span>

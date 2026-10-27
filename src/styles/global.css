@@ -21,6 +21,7 @@ body {
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-md);
+  font-weight: var(--weight-body);
   line-height: var(--leading-body);
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
@@ -41,8 +42,8 @@ h5 {
   margin: 0;
   color: inherit;
   font-family: var(--font-display);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-tight);
+  font-weight: var(--weight-display-strong);
+  line-height: var(--leading-heading);
   letter-spacing: var(--tracking-heading);
   text-wrap: balance;
 }
@@ -105,14 +106,19 @@ legend {
 }
 
 ::selection {
-  background: var(--fuchsia-200);
-  color: var(--wine-950);
+  background: var(--brand-200);
+  color: var(--brand-950);
 }
 
 :focus-visible {
   outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline-offset: 3px;
+}
+
+/* Deep bands invert the focus colour so rings stay visible on near-black. */
+.on-dark :focus-visible,
+.section--wine :focus-visible {
+  outline-color: var(--color-focus-inverse);
 }
 
 :focus:not(:focus-visible) {
@@ -121,18 +127,18 @@ legend {
 
 /* ============================================================
    SCROLL REVEALS
-   One observer per group, one class added on entry. Direct children
-   can share a short stagger without scheduling per-frame work.
+   One observer per group, one class added on entry. The timing is
+   slower than interaction feedback so sections settle rather than
+   snap. Motion intensity: hero > story > sections > cards.
    ============================================================ */
 
 .reveal {
+  --reveal-travel: var(--reveal-distance, 24px);
   opacity: 0;
-  transform: translate3d(0, var(--reveal-distance, 26px), 0);
+  transform: translate3d(0, var(--reveal-travel), 0);
   transition:
-    opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1)
-      var(--reveal-delay, 0ms),
-    transform 0.72s cubic-bezier(0.16, 1, 0.3, 1)
-      var(--reveal-delay, 0ms);
+    opacity var(--t-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--t-reveal) var(--ease-out) var(--reveal-delay, 0ms);
 }
 
 .reveal.is-revealed {
@@ -141,6 +147,7 @@ legend {
 }
 
 .reveal-stagger {
+  --reveal-child-travel: calc(var(--reveal-distance, 24px) * 0.7);
   opacity: 1;
   transform: none;
   transition: none;
@@ -148,47 +155,47 @@ legend {
 
 .reveal-stagger > * {
   opacity: 0;
-  transform: translate3d(0, calc(var(--reveal-distance, 26px) * 0.7), 0);
+  transform: translate3d(0, var(--reveal-child-travel), 0);
 }
 
 .reveal-stagger.is-revealed > * {
   opacity: 1;
   transform: none;
-  animation: reveal-child 0.72s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: reveal-child var(--t-reveal) var(--ease-out) backwards;
 }
 
 .reveal-stagger.is-revealed > *:nth-child(1) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 20ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 30ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(2) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 90ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 110ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(3) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 160ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 190ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(4) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 230ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 270ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(5) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 300ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 350ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(6) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 370ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 430ms);
 }
 
 .reveal-stagger.is-revealed > *:nth-child(n + 7) {
-  animation-delay: calc(var(--reveal-delay, 0ms) + 430ms);
+  animation-delay: calc(var(--reveal-delay, 0ms) + 510ms);
 }
 
 @keyframes reveal-child {
   from {
     opacity: 0;
-    transform: translate3d(0, calc(var(--reveal-distance, 26px) * 0.7), 0);
+    transform: translate3d(0, var(--reveal-child-travel), 0);
   }
 
   to {
@@ -197,10 +204,22 @@ legend {
   }
 }
 
+/* Phones get the same choreography with a shorter travel so reading
+   never waits on motion. Depth stays, distance halves. */
+@media (max-width: 720px) {
+  .reveal {
+    --reveal-travel: calc(var(--reveal-distance, 24px) * 0.55);
+  }
+
+  .reveal-stagger {
+    --reveal-child-travel: calc(var(--reveal-distance, 24px) * 0.4);
+  }
+}
+
 /* ============================================================
    NATIVE PAGE TRANSITIONS
    React Router opts individual navigations into startViewTransition.
-   The header/footer stay put while the page body crossfades and settles.
+   The header/footer stay put while the page body crossfades.
    ============================================================ */
 
 @supports (view-transition-name: none) {
@@ -224,37 +243,37 @@ legend {
   ::view-transition-group(site-header),
   ::view-transition-group(utility-bar),
   ::view-transition-group(site-footer) {
-    animation-duration: 0.42s;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-duration: 0.46s;
+    animation-timing-function: var(--ease-out);
   }
 
   ::view-transition-old(page) {
-    animation: page-out 0.24s cubic-bezier(0.4, 0, 0.6, 1) both;
+    animation: page-out 0.26s cubic-bezier(0.4, 0, 0.6, 1) both;
   }
 
   ::view-transition-new(page) {
-    animation: page-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: page-in 0.56s var(--ease-out) both;
   }
 
   ::view-transition-old(root) {
-    animation: root-out 0.22s linear both;
+    animation: root-out 0.24s linear both;
   }
 
   ::view-transition-new(root) {
-    animation: root-in 0.34s ease-out both;
+    animation: root-in 0.4s ease-out both;
   }
 
   @keyframes page-out {
     to {
       opacity: 0;
-      transform: translate3d(0, -0.6rem, 0) scale(0.995);
+      transform: translate3d(0, -0.25rem, 0);
     }
   }
 
   @keyframes page-in {
     from {
       opacity: 0;
-      transform: translate3d(0, 1.15rem, 0) scale(0.995);
+      transform: translate3d(0, 0.75rem, 0);
     }
 
     to {
@@ -265,13 +284,13 @@ legend {
 
   @keyframes root-out {
     to {
-      opacity: 0.88;
+      opacity: 0.9;
     }
   }
 
   @keyframes root-in {
     from {
-      opacity: 0.88;
+      opacity: 0.9;
     }
 
     to {
@@ -308,7 +327,6 @@ legend {
     animation: none !important;
   }
 
-  /* Keep colour/opacity feedback, drop movement from hover and press states. */
   .btn:active,
   .icon-btn:active,
   .header-icon-btn:active,
@@ -324,8 +342,6 @@ legend {
     transform: none !important;
   }
 
-  .category-card:hover .category-card__glow,
-  .category-card:focus-visible .category-card__glow,
   .category-card:hover .category-card__glyph,
   .category-card:focus-visible .category-card__glyph,
   .category-card:hover .category-card__cta svg,
@@ -333,21 +349,23 @@ legend {
     transform: none !important;
   }
 
-  .product-card:hover {
-    transform: none !important;
-  }
-
-  .product-card:hover .product-card__media .product-visual,
+  .product-card:hover .product-card__media .product-visual__art,
   .product-card__wishlist:hover,
   .product-card__wishlist:active,
-  .product-card__add:active:not(:disabled) {
+  .product-card__add.is-added {
     transform: none !important;
+    animation: none !important;
   }
 
   .product-gallery__thumb:active,
   .product-chip:active,
   .product-color:hover .product-color__swatch,
-  .section-link:hover svg {
+  .section-link:hover svg,
+  .hero__cta:active,
+  .hero__link:active,
+  .product-swatch:active,
+  .product-tier:active,
+  .not-found__links a:active {
     transform: none !important;
   }
 
@@ -397,22 +415,23 @@ legend {
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-8);
-  margin-bottom: clamp(1.5rem, 2.8vw, 2.5rem);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
 }
 
 .section-head__copy {
-  max-width: 64ch;
+  max-width: 62ch;
 }
 
 .section-head h2 {
-  font-size: var(--text-h2);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-display-strong);
 }
 
 .section-head p {
-  margin-top: var(--space-3);
-  max-width: 58ch;
+  margin-top: var(--space-4);
+  max-width: 56ch;
   color: var(--color-text-muted);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   line-height: 1.6;
 }
 
@@ -423,23 +442,28 @@ legend {
 .section-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--space-2);
   min-height: 44px;
   flex-shrink: 0;
-  padding: 0.35rem 0;
+  padding: 0.25rem 0;
   border-bottom: 1px solid transparent;
   color: var(--color-primary);
   font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.01em;
+  font-weight: var(--weight-body-strong);
+  letter-spacing: -0.005em;
   transition:
     color var(--t-fast) var(--ease-out),
-    border-color var(--t-fast) var(--ease-out);
+    border-color var(--t-fast) var(--ease-out),
+    transform var(--t-fast) var(--ease-out);
 }
 
 .section-link:hover {
-  color: var(--color-accent);
+  color: var(--color-primary-hover);
   border-bottom-color: currentColor;
+}
+
+.section-link:active {
+  transform: translateY(1px);
 }
 
 .section-link svg {
@@ -452,7 +476,7 @@ legend {
 
 .on-dark .section-link,
 .section--wine .section-link {
-  color: var(--fuchsia-200);
+  color: var(--brand-200);
 }
 
 .on-dark .section-link:hover,
@@ -471,8 +495,8 @@ legend {
   margin-bottom: var(--space-4);
   color: var(--color-accent-ink);
   font-family: var(--font-body);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
   letter-spacing: var(--tracking-wide);
   line-height: 1.2;
   text-transform: uppercase;
@@ -480,14 +504,14 @@ legend {
 
 .eyebrow::before {
   content: '';
-  width: 18px;
+  width: 16px;
   height: 1px;
   background: currentColor;
 }
 
 .on-dark .eyebrow,
 .section--wine .eyebrow {
-  color: var(--fuchsia-300);
+  color: var(--brand-300);
 }
 
 .eyebrow--plain::before {
@@ -504,8 +528,8 @@ legend {
 }
 
 .lead {
-  font-size: clamp(1rem, 1.4vw, 1.1rem);
-  line-height: var(--leading-relaxed);
+  font-size: var(--text-lg);
+  line-height: 1.55;
   color: var(--color-text-secondary);
 }
 
@@ -545,9 +569,9 @@ legend {
   z-index: var(--z-toast);
   padding: 0.75rem 1rem;
   background: var(--color-primary-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   color: #fff;
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   transform: translateY(-160%);
   transition: transform var(--t-base) var(--ease-out);
 }
@@ -557,7 +581,7 @@ legend {
 }
 
 /* ============================================================
-   BUTTONS
+   BUTTONS — controls share one radius, no resting elevation
    ============================================================ */
 
 .btn {
@@ -568,25 +592,24 @@ legend {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 46px;
-  padding: 0.68rem 1.15rem;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   color: var(--btn-fg);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
   line-height: 1.2;
-  letter-spacing: -0.008em;
+  letter-spacing: -0.005em;
   text-align: center;
   transition:
     background-color var(--t-fast) var(--ease-out),
     border-color var(--t-fast) var(--ease-out),
     color var(--t-fast) var(--ease-out),
-    transform var(--t-fast) var(--ease-out),
-    box-shadow var(--t-fast) var(--ease-out);
+    transform var(--t-fast) var(--ease-out);
 }
 
 .btn:hover {
@@ -594,7 +617,7 @@ legend {
 }
 
 .btn:active {
-  transform: scale(0.97);
+  transform: scale(0.985);
 }
 
 .btn:disabled,
@@ -608,13 +631,13 @@ legend {
 }
 
 .btn--primary {
-  --btn-bg: var(--wine-800);
-  --btn-bg-hover: var(--wine-700);
+  --btn-bg: var(--brand-700);
+  --btn-bg-hover: var(--brand-800);
 }
 
 .btn--accent {
-  --btn-bg: var(--color-accent);
-  --btn-bg-hover: var(--color-accent-hover);
+  --btn-bg: var(--brand-700);
+  --btn-bg-hover: var(--brand-800);
 }
 
 .btn--outline {
@@ -635,27 +658,24 @@ legend {
 }
 
 .btn--ghost:hover {
-  --btn-bg: var(--wine-50);
+  --btn-bg: var(--brand-50);
 }
 
 .btn--light {
   --btn-bg: #fff;
-  --btn-fg: var(--wine-900);
-}
-
-.btn--light:hover {
-  --btn-bg: var(--fuchsia-50);
+  --btn-fg: var(--brand-900);
+  --btn-bg-hover: var(--brand-50);
 }
 
 .btn--outline-light {
   --btn-bg: transparent;
   --btn-fg: #fff;
-  --btn-border: rgb(255 255 255 / 0.36);
+  --btn-border: rgb(255 255 255 / 0.4);
 }
 
 .btn--outline-light:hover {
   --btn-bg: rgb(255 255 255 / 0.08);
-  border-color: rgb(255 255 255 / 0.7);
+  border-color: rgb(255 255 255 / 0.72);
 }
 
 .btn--danger {
@@ -664,15 +684,15 @@ legend {
 }
 
 .btn--sm {
-  min-height: 40px;
-  padding: 0.45rem 0.8rem;
+  min-height: 44px;
+  padding: 0.5rem 0.875rem;
   font-size: var(--text-xs);
 }
 
 .btn--lg {
-  min-height: 52px;
-  padding: 0.85rem 1.5rem;
-  font-size: var(--text-base);
+  min-height: 56px;
+  padding: 0.95rem 1.5rem;
+  font-size: var(--text-md);
 }
 
 .btn--block {
@@ -680,7 +700,7 @@ legend {
 }
 
 .btn--icon {
-  min-width: 46px;
+  min-width: 48px;
   padding-inline: 0.75rem;
 }
 
@@ -694,7 +714,7 @@ legend {
   padding: 0;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   color: var(--color-text-secondary);
   transition:
     background-color var(--t-fast) var(--ease-out),
@@ -709,7 +729,7 @@ legend {
 }
 
 .icon-btn:active {
-  transform: scale(0.94);
+  transform: scale(0.96);
 }
 
 .icon-btn--bordered {
@@ -730,34 +750,34 @@ legend {
   align-items: center;
   gap: 0.3rem;
   padding: 0.3rem 0.45rem;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-control);
   font-family: var(--font-body);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.06em;
-  line-height: 1;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .badge--sale {
-  background: var(--color-promo);
+  background: var(--brand-700);
   color: #fff;
 }
 
 .badge--new {
-  background: var(--wine-900);
+  background: var(--brand-900);
   color: #fff;
 }
 
 .badge--bestseller {
-  background: var(--violet-700);
+  background: var(--brand-800);
   color: #fff;
 }
 
 .badge--soft {
-  background: var(--fuchsia-100);
-  color: var(--fuchsia-700);
+  background: var(--brand-100);
+  color: var(--brand-800);
 }
 
 .badge--success {
@@ -784,14 +804,14 @@ legend {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 19px;
-  height: 19px;
+  min-width: 18px;
+  height: 18px;
   padding: 0 0.28rem;
-  background: var(--color-accent);
-  border-radius: var(--radius-pill);
+  background: var(--brand-700);
+  border-radius: var(--radius-control);
   color: #fff;
-  font-size: 0.66rem;
-  font-weight: var(--weight-bold);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -802,25 +822,25 @@ legend {
 
 .field {
   display: grid;
-  gap: 0.4rem;
+  gap: var(--space-2);
 }
 
 .field label,
 .field-label {
   color: var(--color-text-secondary);
   font-size: var(--text-xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.01em;
+  font-weight: var(--weight-body-strong);
+  letter-spacing: 0.02em;
 }
 
 .input,
 .select {
   width: 100%;
-  min-height: 46px;
-  padding: 0.6rem 0.8rem;
+  min-height: 48px;
+  padding: 0.65rem 0.875rem;
   background: var(--color-bg);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   color: var(--color-text);
   transition:
     border-color var(--t-fast) var(--ease-out),
@@ -828,7 +848,7 @@ legend {
 }
 
 .input::placeholder {
-  color: var(--color-text-faint);
+  color: var(--color-text-muted);
 }
 
 .input:hover,
@@ -845,10 +865,10 @@ legend {
 
 .select {
   appearance: none;
-  padding-right: 2.4rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234a3a42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234a4045' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.8rem center;
+  background-position: right 0.9rem center;
   cursor: pointer;
 }
 
@@ -856,8 +876,8 @@ legend {
 .radio {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  min-height: 36px;
+  gap: var(--space-3);
+  min-height: 44px;
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   cursor: pointer;
@@ -865,8 +885,8 @@ legend {
 
 .checkbox input,
 .radio input {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   margin: 0;
   flex-shrink: 0;
   accent-color: var(--color-accent);
@@ -880,15 +900,15 @@ legend {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.25rem 0.5rem;
+  gap: var(--space-1) var(--space-2);
 }
 
 .price__now {
   color: var(--color-text);
   font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
-  letter-spacing: -0.04em;
+  font-weight: var(--weight-display);
+  letter-spacing: -0.035em;
   line-height: 1.1;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -905,23 +925,23 @@ legend {
 
 .price__save {
   color: var(--color-promo);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.02em;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
 .price--lg .price__now {
-  font-size: clamp(2rem, 3.8vw, 2.75rem);
-  font-weight: var(--weight-semibold);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-display);
 }
 
 .price--lg .price__old {
-  font-size: var(--text-base);
+  font-size: var(--text-md);
 }
 
 .price--lg .price__save {
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
 }
 
 .on-dark .price__now,
@@ -931,12 +951,12 @@ legend {
 
 .on-dark .price__old,
 .product-card--dark .price__old {
-  color: var(--wine-200);
+  color: var(--brand-200);
 }
 
 .on-dark .price__save,
 .product-card--dark .price__save {
-  color: var(--fuchsia-300);
+  color: var(--brand-300);
 }
 
 /* ============================================================
@@ -946,10 +966,10 @@ legend {
 .availability {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-2);
   color: var(--color-text-secondary);
   font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
   line-height: 1.3;
 }
 
@@ -957,9 +977,9 @@ legend {
   content: '';
   width: 6px;
   height: 6px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--color-success);
-  box-shadow: 0 0 0 3px var(--color-success-soft);
 }
 
 .availability--low {
@@ -968,7 +988,6 @@ legend {
 
 .availability--low::before {
   background: var(--color-warning);
-  box-shadow: 0 0 0 3px var(--color-warning-soft);
 }
 
 .availability--out {
@@ -977,15 +996,14 @@ legend {
 
 .availability--out::before {
   background: var(--color-danger);
-  box-shadow: 0 0 0 3px var(--color-danger-soft);
 }
 
 .product-card--dark .availability {
-  color: var(--wine-200);
+  color: var(--brand-200);
 }
 
 .product-card--dark .availability--low {
-  color: #f0bf7a;
+  color: #f0c583;
 }
 
 /* ============================================================
@@ -996,30 +1014,32 @@ legend {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--space-2);
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   line-height: 1.4;
 }
 
 .breadcrumb a {
-  min-height: 28px;
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
+  padding-inline: var(--space-1);
+  margin-inline: calc(var(--space-1) * -1);
   transition: color var(--t-fast) var(--ease-out);
 }
 
 .breadcrumb a:hover {
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
 .breadcrumb__sep {
-  color: var(--color-text-faint);
+  color: var(--color-text-muted);
 }
 
 .breadcrumb [aria-current='page'] {
   color: var(--color-text-secondary);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-body-strong);
 }
 
 /* ============================================================
@@ -1030,7 +1050,7 @@ legend {
   display: grid;
   justify-items: center;
   gap: var(--space-4);
-  padding: clamp(2.5rem, 6vw, 4.5rem) var(--space-6);
+  padding: clamp(3rem, 7vw, 5.5rem) var(--space-6);
   text-align: center;
 }
 
@@ -1041,21 +1061,21 @@ legend {
   width: 64px;
   height: 64px;
   margin-bottom: var(--space-2);
-  background: var(--wine-50);
-  border: 1px solid var(--wine-100);
-  border-radius: var(--radius-lg);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-100);
+  border-radius: var(--radius-panel);
   color: var(--color-primary);
 }
 
 .empty-state h2,
 .empty-state h1 {
-  font-size: var(--text-2xl);
+  font-size: var(--text-heading);
 }
 
 .empty-state p {
-  max-width: 46ch;
+  max-width: 44ch;
   color: var(--color-text-muted);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
 }
 
 .empty-state__actions {
@@ -1073,7 +1093,7 @@ legend {
 .demo-note {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: var(--space-2);
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   line-height: 1.5;
@@ -1096,7 +1116,7 @@ legend {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-5);
+  gap: var(--space-5) var(--space-4);
   align-items: stretch;
 }
 
@@ -1115,10 +1135,8 @@ legend {
 .page-hero {
   position: relative;
   overflow: hidden;
-  padding-block: clamp(1.7rem, 4vw, 3.1rem);
-  background:
-    radial-gradient(circle at 92% 10%, rgb(180 19 94 / 0.08), transparent 38%),
-    var(--color-surface-2);
+  padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(2rem, 4vw, 3.5rem);
+  background: var(--color-surface-2);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -1128,38 +1146,38 @@ legend {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .page-hero__title {
   max-width: 22ch;
-  font-size: clamp(2rem, 4vw, 3.15rem);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-display);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-display-strong);
+  letter-spacing: var(--tracking-heading);
 }
 
 .page-hero__desc {
-  max-width: 62ch;
-  margin-top: var(--space-3);
+  max-width: 60ch;
+  margin-top: var(--space-4);
   color: var(--color-text-muted);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   line-height: 1.65;
 }
 
 .page-hero__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) var(--space-5);
+  gap: var(--space-2) var(--space-5);
   margin-top: var(--space-5);
   color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-body-strong);
 }
 
 .page-hero__meta span {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-2);
 }
 
 .page-hero__meta svg {
@@ -1214,7 +1232,7 @@ legend {
   }
 
   .section-head p {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
   }
 }
 
@@ -1223,11 +1241,11 @@ legend {
   .product-grid--3,
   .product-grid--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
+    gap: var(--space-5) var(--space-3);
   }
 
   .page-hero__title {
-    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    font-size: var(--text-heading);
   }
 }
 

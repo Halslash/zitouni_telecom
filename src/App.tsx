@@ -1,5 +1,6 @@
 import {
   createBrowserRouter,
+  Navigate,
   Outlet,
 } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
         path: path.replace(/^\//, ''),
         element: <ProductsPage />,
       })),
-      { path: 'promotions', element: <ProductsPage /> },
+      { path: 'promotions', element: <Navigate to="/produits" replace /> },
 
       { path: 'produit/:id', element: <ProductDetailPage /> },
       { path: 'panier', element: <CartPage /> },

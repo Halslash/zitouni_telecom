@@ -19,7 +19,7 @@ import {
 export const cinematicEase = [0.16, 1, 0.3, 1] as const;
 
 export const cinematicTransition: Transition = {
-  duration: 0.72,
+  duration: 0.9,
   ease: cinematicEase,
 };
 
@@ -35,7 +35,7 @@ export const cinematicTransition: Transition = {
  */
 export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <AnimateUIProvider tempo={0.85}>
+    <AnimateUIProvider tempo={1.08}>
       <ReducedMotionConfig>
         <LazyMotion features={domAnimation}>{children}</LazyMotion>
       </ReducedMotionConfig>
@@ -55,10 +55,10 @@ interface EntranceOptions {
  * The transform is dropped entirely when the user asks for reduced motion.
  */
 export function useEntrance({
-  distance = 18,
+  distance = 24,
   delay = 0,
   scale = 1,
-  duration = 0.8,
+  duration = 0.95,
 }: EntranceOptions = {}) {
   const reduce = useShouldReduceMotion();
 
@@ -86,9 +86,9 @@ export function useEntrance({
  * enough to settle before the user starts scrolling.
  */
 export function useStaggerReveal(
-  distance = 24,
-  staggerDelay = 0.075,
-  duration = 0.72
+  distance = 32,
+  staggerDelay = 0.11,
+  duration = 0.95
 ) {
   const reduce = useShouldReduceMotion();
   const { transition } = useMotionTokens();

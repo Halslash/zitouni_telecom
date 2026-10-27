@@ -14,7 +14,6 @@ const BOUTIQUE_LINKS = [
   { to: '/tablettes', label: 'Tablettes' },
   { to: '/gaming', label: 'Gaming' },
   { to: '/accessoires', label: 'Accessoires' },
-  { to: '/promotions', label: 'Promotions' },
 ];
 
 const SERVICE_LINKS = [

@@ -1,211 +1,266 @@
+/* ============================================================
+   ZITOUNI TELECOM — DESIGN TOKENS
+   Palette sampled from the logo artwork (deep wine, mauve, warm
+   neutral). One brand hue, one neutral ramp, one type scale.
+   ============================================================ */
+
 :root {
   color-scheme: light;
 
-  /* ============================================================
-     PRIMITIVES — sampled from the Zitouni Telecom logo artwork
-     (deep wine / burgundy, vivid fuchsia-magenta, violet).
-     Warm replicas keep the storefront from feeling like a SaaS UI.
-     ============================================================ */
+  /* ------------------------------------------------------------
+     NEUTRALS — warm, low-chroma, close to paper
+     ------------------------------------------------------------ */
 
-  --wine-950: #240812;
-  --wine-900: #340b1b;
-  --wine-800: #451023;
-  --wine-700: #5a1630;
-  --wine-600: #711c3d;
-  --wine-500: #8b2450;
-  --wine-400: #a83a66;
-  --wine-300: #c4678a;
-  --wine-200: #e7c9d6;
-  --wine-100: #f6e7ed;
-  --wine-50: #fcf5f8;
+  --ink-950: #171214;
+  --ink-900: #221a1d;
+  --ink-800: #2b2226;
+  --ink-700: #4a4045;
+  --ink-600: #5f5459;
+  --ink-500: #6f6368;
+  --ink-400: #8b7d82;
+  --ink-300: #b5a9ad;
+  --ink-200: #ddd3d6;
+  --ink-150: #e8e1e3;
+  --ink-100: #f1ebec;
+  --ink-50: #f8f5f5;
+  --white: #ffffff;
 
-  --fuchsia-700: #96104f;
-  --fuchsia-600: #b4135e;
-  --fuchsia-500: #cc1e71;
-  --fuchsia-400: #e0448d;
-  --fuchsia-300: #ee7caf;
-  --fuchsia-200: #f6c2da;
-  --fuchsia-100: #fbe4f0;
-  --fuchsia-50: #fff5fa;
+  /* ------------------------------------------------------------
+     BRAND — sampled: #6a2631, #7f40a6, #b374b8, #d199cd
+     Only the wine ramp is used for UI. The mauve family stays as
+     decorative artwork inside product plates.
+     ------------------------------------------------------------ */
 
-  --violet-700: #4d2475;
-  --violet-600: #63308f;
-  --violet-500: #7b45a8;
-  --violet-200: #dcc9ed;
-  --violet-100: #f0e9f7;
-  --violet-50: #f9f5fc;
+  --brand-950: #1a1013;
+  --brand-900: #3d1119;
+  --brand-800: #531923;
+  --brand-700: #6a2631;
+  --brand-600: #7f3340;
+  --brand-500: #96505d;
+  --brand-400: #b37884;
+  --brand-300: #c49aa3;
+  --brand-200: #e2c9cf;
+  --brand-100: #f2e5e8;
+  --brand-50: #faf5f6;
 
-  --crimson-700: #8f1229;
-  --crimson-600: #af1733;
-  --crimson-500: #c92a45;
-  --crimson-100: #fbe5e9;
-  --crimson-50: #fdf5f6;
+  --mauve-700: #4e2a62;
+  --mauve-500: #7f40a6;
+  --mauve-300: #b374b8;
+  --mauve-100: #f4ecf5;
 
-  --ink-950: #180f14;
-  --ink-900: #241920;
-  --ink-800: #33262d;
-  --ink-700: #4a3a42;
-  --ink-600: #64525b;
-  --ink-500: #7a6a72;
-  --ink-400: #9a8892;
-  --ink-300: #bcadb5;
-  --ink-200: #ddd2d7;
-  --ink-150: #e8dee3;
-  --ink-100: #f1eaee;
-  --ink-50: #f8f4f6;
-  --innocent: #ffffff;
-
-  --green-700: #106b43;
+  /* Functional colours — used only for state, never decoration */
+  --green-700: #0f5f3c;
   --green-600: #14724a;
-  --green-100: #e8f5ee;
-  --amber-700: #7a4806;
-  --amber-600: #96590a;
-  --amber-100: #fff4e3;
-  --red-700: #9b1c1c;
-  --red-600: #b3261e;
-  --red-100: #fceae8;
+  --green-100: #e9f4ee;
+  --amber-700: #74450a;
+  --amber-600: #8a5509;
+  --amber-100: #fdf4e6;
+  --red-700: #8f1d1d;
+  --red-600: #a62620;
+  --red-100: #fbeceb;
 
-  /* ============================================================
-     TYPOGRAPHY
-     Sora — display / structural headings
-     DM Sans — body / commerce UI
-     ============================================================ */
+  /* Compat aliases used by older modules */
+  --wine-950: var(--brand-950);
+  --wine-900: var(--brand-900);
+  --wine-800: var(--brand-800);
+  --wine-700: var(--brand-700);
+  --wine-600: var(--brand-600);
+  --wine-500: var(--brand-500);
+  --wine-400: var(--brand-400);
+  --wine-300: var(--brand-300);
+  --wine-200: var(--brand-200);
+  --wine-100: var(--brand-100);
+  --wine-50: var(--brand-50);
+  --fuchsia-700: var(--brand-700);
+  --fuchsia-600: var(--brand-700);
+  --fuchsia-500: var(--brand-600);
+  --fuchsia-400: var(--brand-400);
+  --fuchsia-300: var(--brand-300);
+  --fuchsia-200: var(--brand-200);
+  --fuchsia-100: var(--brand-100);
+  --fuchsia-50: var(--brand-50);
+  --violet-700: var(--brand-800);
+  --violet-600: var(--brand-700);
+  --violet-500: var(--brand-600);
+  --violet-200: var(--brand-200);
+  --violet-100: var(--brand-100);
+  --violet-50: var(--brand-50);
+  --crimson-700: var(--brand-800);
+  --crimson-600: var(--brand-700);
+  --crimson-500: var(--brand-600);
+  --crimson-100: var(--brand-100);
+  --crimson-50: var(--brand-50);
+
+  /* ------------------------------------------------------------
+     TYPE — two families, two weights each, six sizes
+     Sora 500/600 · DM Sans 400/500
+     ------------------------------------------------------------ */
 
   --font-display: 'Sora', 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --text-2xs: 0.6875rem; /* 11px */
-  --text-xs: 0.75rem; /* 12px */
-  --text-sm: 0.8125rem; /* 13px */
-  --text-base: 0.9375rem; /* 15px */
-  --text-md: 1rem; /* 16px */
-  --text-lg: 1.0625rem; /* 17px */
-  --text-xl: 1.25rem; /* 20px */
-  --text-2xl: 1.5rem; /* 24px */
-  --text-3xl: 1.875rem; /* 30px */
+  --text-xs: 0.75rem; /* 12 — metadata, labels */
+  --text-sm: 0.875rem; /* 14 — supporting UI */
+  --text-md: 1rem; /* 16 — body */
+  --text-lg: 1.25rem; /* 20 — product names, leads */
+  --text-heading: clamp(1.75rem, 3.4vw, 2.75rem); /* 28–44 */
+  --text-display: clamp(2.75rem, 6.8vw, 5.5rem); /* 44–88 */
 
-  --text-h1: clamp(2.25rem, 4.4vw, 3.5rem);
-  --text-h2: clamp(1.65rem, 2.8vw, 2.35rem);
-  --text-h3: clamp(1.15rem, 1.6vw, 1.4rem);
-  --text-display: clamp(2.85rem, 6.2vw, 5.15rem);
+  /* Launch-page override: the home hero needs a 96px ceiling on
+     desktop while keeping the existing 44px mobile floor. */
+  --text-hero: clamp(2.75rem, 7.2vw, 6rem); /* 44–96 */
 
-  --weight-regular: 400;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --weight-bold: 700;
+  /* Full-bleed section headline: 36px mobile, 60px desktop. The
+     existing heading step tops out at 44px, which is too quiet for
+     a launch band, so this is a named step rather than a one-off. */
+  --text-band: clamp(2.25rem, 4.6vw, 3.75rem); /* 36–60 */
+
+  /* Legacy aliases folded into the six steps */
+  --text-2xs: var(--text-xs);
+  --text-base: var(--text-md);
+  --text-xl: var(--text-lg);
+  --text-2xl: var(--text-heading);
+  --text-3xl: var(--text-heading);
+  --text-h1: var(--text-display);
+  --text-h2: var(--text-heading);
+  --text-h3: var(--text-lg);
+
+  --weight-body: 400;
+  --weight-body-strong: 500;
+  --weight-display: 500;
+  --weight-display-strong: 600;
+  --weight-regular: var(--weight-body);
+  --weight-medium: var(--weight-body-strong);
+  --weight-semibold: var(--weight-display);
+  --weight-bold: var(--weight-body-strong);
 
   --leading-none: 1;
-  --leading-tight: 1.08;
-  --leading-snug: 1.28;
+  --leading-tight: 1.06;
+  --leading-heading: 1.12;
+  --leading-snug: 1.32;
   --leading-body: 1.6;
   --leading-relaxed: 1.7;
 
   --tracking-display: -0.045em;
   --tracking-heading: -0.032em;
   --tracking-body: -0.006em;
-  --tracking-label: 0.12em;
-  --tracking-wide: 0.16em;
+  --tracking-label: 0.1em;
+  --tracking-wide: 0.14em;
 
-  /* ============================================================
-     SPACING — 4px rhythm
-     ============================================================ */
+  /* ------------------------------------------------------------
+     SPACING — 4 / 8 px rhythm only
+     ------------------------------------------------------------ */
 
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-7: 1.75rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-14: 3.5rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
-  --space-32: 8rem;
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 2.5rem; /* 40 */
+  --space-8: 3rem; /* 48 */
+  --space-10: 4rem; /* 64 */
+  --space-12: 5rem; /* 80 */
+  --space-14: 6rem; /* 96 */
+  --space-16: 7rem; /* 112 */
+  --space-20: 9rem; /* 144 */
+  --space-24: 11rem; /* 176 */
+  --space-32: 14rem; /* 224 */
 
-  --section-y: clamp(3.5rem, 6.5vw, 5.75rem);
-  --section-y-tight: clamp(2.5rem, 4.5vw, 3.75rem);
+  --section-y: clamp(4.5rem, 8vw, 7.5rem);
+  --section-y-tight: clamp(3rem, 5vw, 4.5rem);
 
-  /* ============================================================
+  /* Full-bleed launch bands: 80px on mobile, 128–192px on desktop. */
+  --section-band: clamp(5rem, 10vw, 12rem);
+
+  /* ------------------------------------------------------------
      LAYOUT
-     ============================================================ */
+     ------------------------------------------------------------ */
 
-  --container: 1320px;
+  --container: 1280px;
   --container-narrow: 1080px;
-  --container-copy: 720px;
-  --gutter: clamp(1.125rem, 4vw, 2.5rem);
-  --topbar-h: 38px;
-  --header-main-h: 78px;
-  --header-nav-h: 48px;
-  --header-h: calc(var(--header-main-h) + var(--header-nav-h));
+  --container-copy: 680px;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --topbar-h: 44px;
+  --header-main-h: 72px;
+  --header-h: var(--header-main-h);
+  /* Utility bar + masthead: the amount of fixed chrome above a page. */
+  --chrome-h: calc(var(--topbar-h) + var(--header-main-h));
 
-  /* ============================================================
-     SHAPE & ELEVATION
-     Restrained: sharp commercial geometry, few rounded corners.
-     ============================================================ */
+  /* ------------------------------------------------------------
+     SHAPE — three radii, hairlines, no resting shadows
+     ------------------------------------------------------------ */
 
-  --radius-xs: 3px;
-  --radius-sm: 5px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-pill: 999px;
+  --radius-control: 8px;
+  --radius-surface: 12px;
+  --radius-panel: 20px;
+
+  --radius-xs: var(--radius-control);
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-surface);
+  --radius-lg: var(--radius-panel);
+  --radius-xl: var(--radius-panel);
+  --radius-pill: var(--radius-control);
 
   --border-width: 1px;
-  --shadow-xs: 0 1px 2px rgb(36 8 18 / 0.04);
-  --shadow-sm: 0 1px 2px rgb(36 8 18 / 0.04), 0 6px 18px -14px rgb(36 8 18 / 0.28);
-  --shadow-md: 0 2px 4px rgb(36 8 18 / 0.03), 0 18px 38px -24px rgb(36 8 18 / 0.34);
-  --shadow-lg: 0 4px 10px rgb(36 8 18 / 0.04), 0 36px 70px -38px rgb(36 8 18 / 0.42);
-  --shadow-focus: 0 0 0 3px rgb(180 19 94 / 0.18);
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: 0 24px 56px -32px rgb(23 18 20 / 0.28);
+  --shadow-lg: 0 32px 80px -36px rgb(23 18 20 / 0.36);
+  --shadow-overlay: 0 32px 80px -32px rgb(23 18 20 / 0.4);
+  --shadow-header: 0 18px 36px -32px rgb(23 18 20 / 0.45);
+  --shadow-focus: 0 0 0 3px rgb(106 38 49 / 0.18);
 
-  /* ============================================================
-     MOTION
-     ============================================================ */
+  /* ------------------------------------------------------------
+     MOTION — slower, smoother, no bounce
+     ------------------------------------------------------------ */
 
-  --ease-out: cubic-bezier(0.22, 0.7, 0.28, 1);
+  /* One entrance curve for the whole storefront. Hero load-in,
+     scroll reveals and route crossfades all resolve on this value. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: cubic-bezier(0.34, 1.24, 0.64, 1);
-  --t-fast: 140ms;
-  --t-base: 220ms;
-  --t-slow: 360ms;
+  --ease-spring: var(--ease-out);
+  --t-fast: 200ms;
+  --t-base: 320ms;
+  --t-slow: 560ms;
+  --t-reveal: 900ms;
 
-  /* ============================================================
-     SEMANTIC TOKENS
-     ============================================================ */
+  /* ------------------------------------------------------------
+     SEMANTIC
+     ------------------------------------------------------------ */
 
-  --color-primary: var(--wine-800);
-  --color-primary-hover: var(--wine-700);
-  --color-primary-active: var(--wine-900);
-  --color-primary-strong: var(--wine-950);
+  --color-primary: var(--brand-700);
+  --color-primary-hover: var(--brand-800);
+  --color-primary-active: var(--brand-900);
+  --color-primary-strong: var(--brand-900);
 
-  --color-accent: var(--fuchsia-600);
-  --color-accent-hover: var(--fuchsia-700);
-  --color-accent-soft: var(--fuchsia-100);
-  --color-accent-ink: var(--fuchsia-700);
+  --color-accent: var(--brand-700);
+  --color-accent-hover: var(--brand-800);
+  --color-accent-soft: var(--brand-100);
+  --color-accent-ink: var(--brand-700);
 
-  --color-promo: var(--crimson-600);
-  --color-promo-soft: var(--crimson-100);
+  --color-promo: var(--brand-700);
+  --color-promo-soft: var(--brand-100);
 
-  --color-bg: var(--innocent);
-  --color-bg-warm: #fdfafb;
+  --color-bg: var(--white);
+  --color-bg-warm: #fdfbfb;
+  /* Neutral near-black for cinematic bands — deliberately not #000. */
+  --color-bg-deep: var(--ink-950);
   --color-surface: var(--ink-50);
-  --color-surface-2: #fcfafb;
+  --color-surface-2: #fbf9f9;
   --color-surface-3: var(--ink-100);
-  --color-surface-inverse: var(--wine-950);
+  --color-surface-inverse: var(--brand-950);
 
   --color-text: var(--ink-950);
   --color-text-secondary: var(--ink-700);
   --color-text-muted: var(--ink-500);
   --color-text-faint: var(--ink-400);
-  --color-text-inverse: #fbf3f6;
-  --color-text-inverse-muted: #d9c3cc;
+  --color-text-inverse: #f7f0f2;
+  --color-text-inverse-muted: #c9b6bc;
 
   --color-border: var(--ink-150);
   --color-border-strong: var(--ink-200);
-  --color-border-inverse: rgb(255 255 255 / 0.14);
+  --color-border-inverse: rgb(255 255 255 / 0.16);
 
   --color-success: var(--green-600);
   --color-success-soft: var(--green-100);
@@ -214,8 +269,8 @@
   --color-danger: var(--red-600);
   --color-danger-soft: var(--red-100);
 
-  --color-focus: var(--fuchsia-600);
-  --color-focus-inverse: var(--fuchsia-200);
+  --color-focus: var(--brand-700);
+  --color-focus-inverse: var(--brand-200);
 
   /* Component tokens */
   --btn-bg: var(--color-primary);
@@ -223,7 +278,7 @@
   --btn-border: transparent;
   --btn-bg-hover: var(--color-primary-hover);
 
-  /* Compatibility aliases for legacy utility classes */
+  /* Compatibility aliases for shared utility classes */
   --ink: var(--color-text);
   --ink-2: var(--color-text-secondary);
   --ink-3: var(--color-text-muted);
@@ -234,21 +289,7 @@
   --surface-2: var(--color-surface-2);
   --surface-3: var(--color-surface-3);
   --paper: var(--color-bg);
-  --brand-950: var(--wine-950);
-  --brand-900: var(--wine-900);
-  --brand-800: var(--wine-800);
-  --brand-700: var(--wine-700);
-  --brand-600: var(--wine-600);
-  --brand-500: var(--wine-500);
-  --brand-200: var(--wine-200);
-  --brand-100: var(--wine-100);
-  --magenta-700: var(--fuchsia-700);
-  --magenta-600: var(--fuchsia-600);
-  --magenta-500: var(--fuchsia-500);
-  --magenta-400: var(--fuchsia-400);
-  --magenta-200: var(--fuchsia-200);
-  --magenta-100: var(--fuchsia-100);
-  --magenta-50: var(--fuchsia-50);
+  --innocent: #ffffff;
   --success: var(--color-success);
   --success-soft: var(--color-success-soft);
   --warning: var(--color-warning);
@@ -266,19 +307,16 @@
 
 /* ============================================================
    RESPONSIVE LAYOUT TOKENS
-   The sticky header collapses below the desktop nav breakpoint,
-   so scroll offsets must follow the real measured height.
    ============================================================ */
 
 @media (max-width: 980px) {
   :root {
-    --header-main-h: 68px;
-    --header-nav-h: 0px;
+    --header-main-h: 64px;
   }
 }
 
 @media (max-width: 600px) {
   :root {
-    --header-main-h: 64px;
+    --header-main-h: 60px;
   }
 }

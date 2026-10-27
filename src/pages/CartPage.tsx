@@ -10,17 +10,13 @@ import QuantityStepper from '../components/QuantityStepper';
 import { WilayaSelector } from '../components/WilayaSelector';
 import { useCart, type CartItem } from '../context/CartContext';
 import { useWilaya } from '../context/WilayaContext';
+import { getVariantPrice } from '../data/products';
 import { getDeliveryEstimate } from '../data/wilayas';
-import {
-  formatItemCount,
-  formatPrice,
-  getStockState,
-} from '../lib/format';
+import { formatItemCount, formatPrice } from '../lib/format';
+import { cinematicEase } from '../lib/motion';
 import { usePageTitle } from '../lib/usePageTitle';
 import {
-  ArrowRightIcon,
   InfoIcon,
-  ShieldCheckIcon,
   ShoppingBagIcon,
   TrashIcon,
   TruckIcon,
@@ -50,7 +46,10 @@ function CartItemRow({ item }: { item: CartItem }) {
   const { updateQuantity, remove } = useCart();
   const { transition } = useMotionTokens();
   const reduceMotion = useShouldReduceMotion();
-  const stock = getStockState(item.product);
+  const unitPrice = getVariantPrice(
+    item.product,
+    item.variant?.variant
+  );
 
   return (
     <m.article
@@ -60,12 +59,8 @@ function CartItemRow({ item }: { item: CartItem }) {
           ? { opacity: 0, transition: transition.fade }
           : {
               opacity: 0,
-              height: 0,
-              overflow: 'hidden',
-              paddingTop: 0,
-              paddingBottom: 0,
-              borderBottomWidth: 0,
-              transition: transition.disclosure,
+              x: -14,
+              transition: { duration: 0.32, ease: cinematicEase },
             }
       }
     >
@@ -87,18 +82,15 @@ function CartItemRow({ item }: { item: CartItem }) {
         <h2 className="cart-item__name">
           <Link to={`/produit/${item.product.id}`}>{item.product.name}</Link>
         </h2>
-        <span className={`availability ${stock.modifier}`}>
-          {stock.label}
-        </span>
-        {item.variant && (item.variant.storage || item.variant.color) && (
+        {item.variant && (item.variant.variant || item.variant.color) && (
           <p className="cart-item__variant">
-            {[item.variant.storage, item.variant.color]
+            {[item.variant.variant, item.variant.color]
               .filter(Boolean)
               .join(' · ')}
           </p>
         )}
         <p className="cart-item__unit">
-          {formatPrice(item.product.price)} l'unité
+          {formatPrice(unitPrice)} l'unité
         </p>
       </div>
 
@@ -107,13 +99,13 @@ function CartItemRow({ item }: { item: CartItem }) {
           value={item.quantity}
           onChange={(quantity) => updateQuantity(item.lineId, quantity)}
           min={1}
-          max={item.product.stockCount ?? 99}
+          max={99}
           label={item.product.name}
           size="sm"
         />
 
         <p className="cart-item__total">
-          <AnimatedPrice value={item.product.price * item.quantity} />
+          <AnimatedPrice value={unitPrice * item.quantity} />
         </p>
 
         <button
@@ -137,7 +129,6 @@ export default function CartPage() {
   const { transition } = useMotionTokens();
   const reduceMotion = useShouldReduceMotion();
   const estimate = getDeliveryEstimate(wilaya);
-  const [checkoutNotice, setCheckoutNotice] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
   const [announcement, setAnnouncement] = useState('');
   const previousRows = useRef(0);
@@ -263,8 +254,8 @@ export default function CartPage() {
                   <Link to="/produits" className="btn btn--primary">
                     Parcourir le catalogue
                   </Link>
-                  <Link to="/promotions" className="btn btn--outline">
-                    Voir les promotions
+                  <Link to="/favoris" className="btn btn--outline">
+                    Voir mes favoris
                   </Link>
                 </div>
               </m.div>
@@ -328,65 +319,25 @@ export default function CartPage() {
                       <dt>Livraison</dt>
                       <dd>À confirmer à la commande</dd>
                     </div>
-                    <div className="cart-summary__total">
-                      <dt>Total provisoire</dt>
-                      <dd>
-                        <AnimatedPrice value={state.total} />
-                      </dd>
-                    </div>
                   </dl>
 
-                  <button
-                    type="button"
-                    className="btn btn--primary btn--lg btn--block"
-                    onClick={() => setCheckoutNotice(true)}
-                  >
-                    Passer la commande
-                    <ArrowRightIcon size={16} />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {checkoutNotice && (
-                      <m.p
-                        className="cart-summary__notice"
-                        role="status"
-                        initial={{
-                          opacity: 0,
-                          y: reduceMotion ? 0 : -4,
-                        }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{
-                          opacity: 0,
-                          y: reduceMotion ? 0 : -4,
-                          transition: transition.dismiss,
-                        }}
-                        transition={transition.fade}
-                      >
-                        <InfoIcon size={15} />
-                        Le paiement n'est pas encore activé sur ce prototype.
-                        Votre panier reste enregistré et vous pouvez continuer
-                        à comparer les produits.
-                      </m.p>
-                    )}
-                  </AnimatePresence>
+                  <div className="cart-summary__checkout" role="note">
+                    <span className="cart-summary__checkout-title">
+                      Commande en ligne bientôt disponible
+                    </span>
+                    <p>
+                      Le paiement n&apos;est pas encore actif sur cette
+                      démonstration. Votre panier reste enregistré sur cet
+                      appareil.
+                    </p>
+                  </div>
 
                   <Link
                     to="/produits"
-                    className="btn btn--outline btn--block"
+                    className="cart-summary__continue"
                   >
                     Continuer mes achats
                   </Link>
-
-                  <ul className="cart-summary__trust">
-                    <li>
-                      <ShieldCheckIcon size={14} />
-                      Garantie officielle sur chaque produit
-                    </li>
-                    <li>
-                      <TruckIcon size={14} />
-                      Livraison dans les 58 wilayas
-                    </li>
-                  </ul>
 
                   <p className="demo-note cart-summary__note">
                     <InfoIcon size={13} />

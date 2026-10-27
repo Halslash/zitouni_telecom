@@ -15,6 +15,7 @@ import {
 } from '@animate-ui/react/utils/motion';
 import { CATEGORY_PATHS, categories } from '../data/products';
 import { formatNumber } from '../lib/format';
+import { cinematicEase } from '../lib/motion';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import BrandLockup from './BrandLockup';
@@ -30,7 +31,6 @@ import {
   MenuIcon,
   SearchIcon,
   ShoppingBagIcon,
-  TagIcon,
   UserIcon,
 } from './Icons';
 import './Header.css';
@@ -112,8 +112,14 @@ export default function Header() {
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const hasMounted = useRef(false);
   const drawerTitleId = useId();
-  const drawerOffset = reduceMotion ? 0 : 32;
-  const searchOffset = reduceMotion ? 0 : -6;
+  const drawerOffset = reduceMotion ? '0%' : '100%';
+  const searchOffset = reduceMotion ? 0 : -8;
+  const drawerTransition = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: 0.4, ease: cinematicEase };
+  const drawerExit = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: 0.3, ease: cinematicEase };
 
   const itemCount = state.items.reduce(
     (sum, item) => sum + item.quantity,
@@ -152,6 +158,20 @@ export default function Header() {
   useEffect(() => {
     if (!searchOpen) return;
     return () => searchToggleRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return undefined;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSearchOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [searchOpen]);
 
   useEffect(() => {
@@ -220,7 +240,23 @@ export default function Header() {
         <div className="container site-header__main">
           <BrandLockup />
 
-          <SearchForm className="header-search--desktop" />
+          <nav className="site-nav" aria-label="Catégories">
+            <ul className="primary-nav">
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <NavLink
+                    to={CATEGORY_PATHS[category.id]}
+                    className={({ isActive }) =>
+                      `primary-nav__link${isActive ? ' is-active' : ''}`
+                    }
+                    viewTransition
+                  >
+                    {category.name}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           <div className="site-header__actions">
             <button
@@ -229,7 +265,7 @@ export default function Header() {
               className="header-icon-btn header-icon-btn--search"
               onClick={() => setSearchOpen((open) => !open)}
               aria-expanded={searchOpen}
-              aria-controls="mobile-search-panel"
+              aria-controls="header-search-panel"
               aria-label={
                 searchOpen ? 'Fermer la recherche' : 'Ouvrir la recherche'
               }
@@ -240,15 +276,20 @@ export default function Header() {
             <Link
               to="/compte"
               className="header-icon-btn header-icon-btn--account"
+              aria-label="Mon compte"
               viewTransition
             >
-              <UserIcon size={19} />
-              <span className="header-icon-btn__label">Compte</span>
+              <UserIcon size={20} />
             </Link>
 
-            <Link to="/favoris" className="header-icon-btn" viewTransition>
+            <Link
+              to="/favoris"
+              className="header-icon-btn header-icon-btn--wishlist"
+              aria-label="Mes favoris"
+              viewTransition
+            >
               <span className="header-icon-btn__icon">
-                <HeartIcon size={19} />
+                <HeartIcon size={20} />
                 {wishlist.count > 0 && (
                   <m.span
                     key={wishlist.count}
@@ -263,16 +304,21 @@ export default function Header() {
                     }
                     animate={{ opacity: 1, scale: 1 }}
                     transition={spring.pop}
+                    aria-hidden="true"
                   >
                     {formatNumber(wishlist.count)}
                   </m.span>
                 )}
               </span>
-              <span className="header-icon-btn__label">Favoris</span>
             </Link>
 
-            <Link to="/panier" className="header-cart" viewTransition>
-              <ShoppingBagIcon size={18} />
+            <Link
+              to="/panier"
+              className="header-cart"
+              aria-label={`Panier, ${itemCount} article${itemCount > 1 ? 's' : ''}`}
+              viewTransition
+            >
+              <ShoppingBagIcon size={20} />
               <span className="header-cart__label">Panier</span>
               <m.span
                 key={itemCount}
@@ -287,13 +333,10 @@ export default function Header() {
                 }
                 animate={{ opacity: 1, scale: 1 }}
                 transition={spring.pop}
+                aria-hidden="true"
               >
                 {formatNumber(itemCount)}
               </m.span>
-              <span className="visually-hidden">
-                {' '}
-                {itemCount > 1 ? 'articles' : 'article'}
-              </span>
             </Link>
 
             <button
@@ -311,60 +354,33 @@ export default function Header() {
         <AnimatePresence initial={false}>
           {searchOpen && (
             <m.div
-              id="mobile-search-panel"
-              className="site-header__mobile-search"
+              id="header-search-panel"
+              className="site-header__search-panel"
               initial={{ opacity: 0, y: searchOffset }}
               animate={{ opacity: 1, y: 0 }}
               exit={{
                 opacity: 0,
                 y: searchOffset,
-                transition: transition.dismiss,
+                transition: reduceMotion
+                  ? { duration: 0.12 }
+                  : { duration: 0.24, ease: cinematicEase },
               }}
-              transition={transition.fade}
+              transition={
+                reduceMotion
+                  ? { duration: 0.12 }
+                  : { duration: 0.34, ease: cinematicEase }
+              }
             >
               <div className="container">
                 <SearchForm
                   autoFocus
-                  searchLabel="Recherche boutique mobile"
+                  searchLabel="Recherche boutique"
                   onSubmitted={() => setSearchOpen(false)}
                 />
               </div>
             </m.div>
           )}
         </AnimatePresence>
-
-        <div className="site-header__nav">
-          <div className="container site-header__nav-inner">
-            <nav aria-label="Catégories">
-              <ul className="primary-nav">
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <NavLink
-                      to={CATEGORY_PATHS[category.id]}
-                      className={({ isActive }) =>
-                        `primary-nav__link${isActive ? ' is-active' : ''}`
-                      }
-                      viewTransition
-                    >
-                      {category.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="primary-nav__aside">
-              <Link
-                to="/promotions"
-                className="primary-nav__promo"
-                viewTransition
-              >
-                <TagIcon size={15} />
-                Promotions
-              </Link>
-            </div>
-          </div>
-        </div>
       </header>
 
       {createPortal(
@@ -387,21 +403,10 @@ export default function Header() {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={drawerTitleId}
-                initial={{
-                  opacity: 0,
-                  x: drawerOffset,
-                }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{
-                  opacity: 0,
-                  x: drawerOffset * 0.75,
-                  transition: transition.drawerOut,
-                }}
-                transition={
-                  reduceMotion
-                    ? transition.fade
-                    : { ...transition.drawer, duration: 0.28 }
-                }
+                initial={{ x: drawerOffset }}
+                animate={{ x: 0 }}
+                exit={{ x: drawerOffset, transition: drawerExit }}
+                transition={drawerTransition}
               >
               <div className="menu-drawer__head">
                 <BrandLockup
@@ -446,15 +451,6 @@ export default function Header() {
                     <ChevronRightIcon size={17} />
                   </Link>
                 ))}
-                <Link
-                  to="/promotions"
-                  className="menu-drawer__link"
-                  viewTransition={false}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <span>Promotions</span>
-                  <span className="menu-drawer__link-tag">Offres</span>
-                </Link>
               </nav>
 
               <nav className="menu-drawer__nav" aria-label="Mon espace">

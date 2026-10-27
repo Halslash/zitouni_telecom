@@ -1,7 +1,12 @@
+/* ============================================================
+   WILAYA SELECTOR — one field, one dialog
+   ============================================================ */
+
 .wilaya-selector {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-2);
+  min-height: 44px;
   padding: 0;
   background: transparent;
   border: 0;
@@ -19,21 +24,21 @@
 .wilaya-selector__text {
   display: flex;
   align-items: baseline;
-  gap: 0.3rem;
+  gap: var(--space-1);
   min-width: 0;
 }
 
 .wilaya-selector__label {
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
   letter-spacing: 0.01em;
   opacity: 0.7;
   white-space: nowrap;
 }
 
 .wilaya-selector__value {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-bold);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-body-strong);
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
@@ -51,19 +56,19 @@
 /* Field variant — product detail, cart, delivery section */
 .wilaya-selector--field {
   width: 100%;
-  min-height: 58px;
-  gap: 0.7rem;
-  padding: 0.6rem 0.85rem;
+  min-height: 60px;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
   background: var(--color-bg);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   transition:
     border-color var(--t-fast) var(--ease-out),
     box-shadow var(--t-fast) var(--ease-out);
 }
 
 .wilaya-selector--field:hover {
-  border-color: var(--ink-400);
+  border-color: var(--color-text-faint);
 }
 
 .wilaya-selector--field:focus-visible {
@@ -73,29 +78,29 @@
 }
 
 .wilaya-selector--field .wilaya-selector__icon {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: var(--wine-50);
-  border-radius: var(--radius-sm);
+  background: var(--brand-50);
+  border-radius: var(--radius-control);
   color: var(--color-primary);
   opacity: 1;
 }
 
 .wilaya-selector--field .wilaya-selector__text {
   display: grid;
-  gap: 0.16rem;
+  gap: var(--space-1);
   flex: 1;
 }
 
 .wilaya-selector--field .wilaya-selector__label {
   color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.11em;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   opacity: 1;
 }
@@ -117,22 +122,22 @@
   z-index: var(--z-modal);
   display: grid;
   place-items: center;
-  padding: 1rem;
-  background: rgb(24 8 18 / 0.58);
-  animation: wilaya-fade 180ms var(--ease-out) both;
+  padding: var(--space-4);
+  background: rgb(23 18 20 / 0.6);
+  animation: wilaya-fade 200ms var(--ease-out) both;
 }
 
 .wilaya-dialog {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  width: min(100%, 570px);
+  width: min(100%, 560px);
   max-height: min(84vh, 760px);
   overflow: hidden;
   background: var(--color-bg);
-  border: 1px solid var(--wine-200);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
   box-shadow: var(--shadow-lg);
-  animation: wilaya-rise 220ms var(--ease-out) both;
+  animation: wilaya-rise 240ms var(--ease-out) both;
 }
 
 .wilaya-dialog__head {
@@ -144,12 +149,13 @@
 }
 
 .wilaya-dialog__title {
-  font-size: var(--text-xl);
-  letter-spacing: -0.025em;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display-strong);
+  letter-spacing: var(--tracking-heading);
 }
 
 .wilaya-dialog__desc {
-  margin-top: 0.3rem;
+  margin-top: var(--space-1);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   line-height: 1.5;
@@ -163,14 +169,14 @@
 .wilaya-dialog__search-icon {
   position: absolute;
   top: 50%;
-  left: calc(var(--space-5) + 0.85rem);
+  left: calc(var(--space-5) + var(--space-3));
   color: var(--color-text-muted);
   transform: translateY(-70%);
   pointer-events: none;
 }
 
 .wilaya-dialog__input {
-  padding-left: 2.55rem;
+  padding-left: calc(var(--space-6) + var(--space-2));
   font-size: var(--text-md);
 }
 
@@ -184,19 +190,19 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--space-3) var(--space-3);
+  padding: 0 var(--space-2) var(--space-2);
   scrollbar-width: thin;
-  scrollbar-color: var(--wine-200) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 }
 
 .wilaya-option {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto 20px;
+  grid-template-columns: 36px minmax(0, 1fr) auto 20px;
   align-items: center;
-  gap: 0.55rem;
-  min-height: 46px;
-  padding: 0.45rem 0.65rem;
-  border-radius: var(--radius-sm);
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
   color: var(--color-text-secondary);
   font-size: var(--text-sm);
   cursor: pointer;
@@ -216,7 +222,7 @@
 }
 
 .wilaya-option--selected {
-  background: var(--wine-50);
+  background: var(--brand-50);
   color: var(--color-primary);
 }
 
@@ -230,31 +236,31 @@
 
 .wilaya-option__code {
   color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-bold);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-body-strong);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
 }
 
 .wilaya-option__name {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-body);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .wilaya-option--selected .wilaya-option__name {
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-body-strong);
 }
 
 .wilaya-option__zone {
   color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   white-space: nowrap;
 }
 
 .wilaya-option__check {
-  color: var(--color-accent);
+  color: var(--color-primary);
   opacity: 0;
 }
 
@@ -274,12 +280,12 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.4rem 1rem;
-  padding: 0.7rem var(--space-5);
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-3) var(--space-5);
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
 }
 
 @keyframes wilaya-fade {
@@ -294,7 +300,7 @@
 @keyframes wilaya-rise {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.99);
+    transform: translateY(12px) scale(0.995);
   }
   to {
     opacity: 1;
@@ -303,10 +309,6 @@
 }
 
 @media (max-width: 640px) {
-  .wilaya-selector__label {
-    display: none;
-  }
-
   .wilaya-modal {
     align-items: end;
     padding: 0;
@@ -316,16 +318,17 @@
     width: 100%;
     max-height: 88vh;
     border-width: 1px 0 0;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
   .wilaya-dialog__input {
-    font-size: 1rem;
+    font-size: var(--text-md);
   }
 
   .wilaya-option {
-    grid-template-columns: 30px minmax(0, 1fr) 20px;
+    grid-template-columns: 32px minmax(0, 1fr) 20px;
+    min-height: 52px;
   }
 
   .wilaya-option__zone {

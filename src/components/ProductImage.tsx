@@ -15,10 +15,10 @@ const ACCENTS: Record<
   { from: string; to: string; edge: string; pale: string }
 > = {
   smartphones: {
-    from: '#e0448d',
-    to: '#4d2475',
-    edge: '#f6c2da',
-    pale: '#fbe4f0',
+    from: '#8b2450',
+    to: '#451023',
+    edge: '#e7c9d6',
+    pale: '#f6e7ed',
   },
   laptops: {
     from: '#7b45a8',
@@ -27,22 +27,22 @@ const ACCENTS: Record<
     pale: '#f0e9f7',
   },
   tablets: {
-    from: '#b4135e',
-    to: '#451023',
-    edge: '#f6c2da',
+    from: '#a83a66',
+    to: '#340b1b',
+    edge: '#e7c9d6',
     pale: '#fcf5f8',
   },
   gaming: {
-    from: '#cc1e71',
-    to: '#340b1b',
-    edge: '#ee7caf',
-    pale: '#fbe8ed',
+    from: '#711c3d',
+    to: '#1a1013',
+    edge: '#c4678a',
+    pale: '#f7ecef',
   },
   accessories: {
-    from: '#8b2450',
-    to: '#241920',
-    edge: '#e7c9d6',
-    pale: '#f8f4f6',
+    from: '#96505d',
+    to: '#221a1d',
+    edge: '#e2c9cf',
+    pale: '#f7f1f2',
   },
 };
 
@@ -53,6 +53,50 @@ interface ArtIds {
   shadow: string;
   glass: string;
   screenClip: string;
+}
+
+/**
+ * Colour-swatch support: the illustration's frame is repainted from
+ * the selected finish instead of staying silver. Photos take over
+ * when real photography exists, so this only affects the fallback.
+ */
+function normalizeHex(value?: string): string | undefined {
+  if (!value) return undefined;
+  const hex = value.trim().replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(hex)) {
+    return `#${hex
+      .split('')
+      .map((char) => char + char)
+      .join('')}`;
+  }
+  return /^[0-9a-f]{6}$/i.test(hex) ? `#${hex}` : undefined;
+}
+
+function mixHex(hex: string, target: string, amount: number): string {
+  const channel = (value: string, index: number) =>
+    parseInt(value.slice(index, index + 2), 16);
+  const mix = (index: number) => {
+    const source = channel(hex, index);
+    const destination = channel(target, index);
+    return Math.round(source + (destination - source) * amount)
+      .toString(16)
+      .padStart(2, '0');
+  };
+  return `#${mix(1)}${mix(3)}${mix(5)}`;
+}
+
+function frameStops(finish?: string): string[] {
+  const base = normalizeHex(finish);
+  if (!base) {
+    return ['#f4efed', '#bfb6b6', '#efe9e7', '#9c9296', '#ded5d5'];
+  }
+  return [
+    mixHex(base, '#ffffff', 0.58),
+    mixHex(base, '#000000', 0.2),
+    mixHex(base, '#ffffff', 0.34),
+    mixHex(base, '#000000', 0.32),
+    mixHex(base, '#ffffff', 0.2),
+  ];
 }
 
 interface ScreenRect {
@@ -78,19 +122,23 @@ function ArtDefs({
   ids,
   accent,
   screen,
+  finish,
 }: {
   ids: ArtIds;
   accent: { from: string; to: string; edge: string; pale: string };
   screen: ScreenRect;
+  finish?: string;
 }) {
+  const stops = frameStops(finish);
+
   return (
     <defs>
       <linearGradient id={ids.frame} x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#f4efed" />
-        <stop offset="0.28" stopColor="#bfb6b6" />
-        <stop offset="0.5" stopColor="#efe9e7" />
-        <stop offset="0.72" stopColor="#9c9296" />
-        <stop offset="1" stopColor="#ded5d5" />
+        <stop offset="0" stopColor={stops[0]} />
+        <stop offset="0.28" stopColor={stops[1]} />
+        <stop offset="0.5" stopColor={stops[2]} />
+        <stop offset="0.72" stopColor={stops[3]} />
+        <stop offset="1" stopColor={stops[4]} />
       </linearGradient>
       <linearGradient id={ids.screen} x1="0.1" y1="0" x2="0.9" y2="1">
         <stop offset="0" stopColor={accent.from} />
@@ -728,9 +776,11 @@ function AccessoriesArt({
 function DeviceArt({
   category,
   view,
+  finish,
 }: {
   category: Category;
   view: number;
+  finish?: string;
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const ids = useArtIds(uid);
@@ -767,7 +817,7 @@ function DeviceArt({
       aria-hidden="true"
       focusable="false"
     >
-      <ArtDefs ids={ids} accent={accent} screen={screen} />
+      <ArtDefs ids={ids} accent={accent} screen={screen} finish={finish} />
       {content}
     </svg>
   );
@@ -781,6 +831,8 @@ interface ProductImageProps {
   priority?: boolean;
   /** Selects one of three framings for gallery thumbnails. */
   view?: number;
+  /** Hex colour used to repaint the illustration's body. */
+  finish?: string;
 }
 
 /**
@@ -796,6 +848,7 @@ export default function ProductImage({
   className,
   priority = false,
   view = 0,
+  finish,
 }: ProductImageProps) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -825,7 +878,7 @@ export default function ProductImage({
         {CATEGORY_LABELS[category]}
       </span>
       <span className="product-visual__art" aria-hidden="true">
-        <DeviceArt category={category} view={view} />
+        <DeviceArt category={category} view={view} finish={finish} />
       </span>
       <span className="product-visual__meta" aria-hidden="true">
         <span>Zitouni</span>
