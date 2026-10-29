@@ -7,14 +7,12 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Link, NavLink } from './AppLink';
+import { Link } from './AppLink';
 import { AnimatePresence, m } from 'motion/react';
 import {
   useMotionTokens,
   useShouldReduceMotion,
 } from '@animate-ui/react/utils/motion';
-import { CATEGORY_PATHS, categories } from '../data/products';
-import type { Category } from '../data/products';
 import { formatNumber } from '../lib/format';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -29,7 +27,10 @@ import {
   SearchIcon,
   ShoppingBagIcon,
 } from './Icons';
-import NavFlyout from './NavFlyout';
+import HeaderNav from './HeaderNav';
+import { categories } from '../data/products';
+import { CATEGORY_PATHS } from '../data/products';
+import { NavLink } from './AppLink';
 import './Header.css';
 
 function SearchForm({
@@ -100,7 +101,6 @@ export default function Header() {
   const reduceMotion = useShouldReduceMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [activeFlyout, setActiveFlyout] = useState<Category | null>(null);
   const scrollSentinelRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -199,33 +199,7 @@ export default function Header() {
             <BrandLockup />
           </div>
 
-          <nav className="site-nav" aria-label="Navigation">
-            <ul className="primary-nav">
-              {categories.map((category) => (
-                <li key={category.id}>
-                  <NavLink
-                    to={CATEGORY_PATHS[category.id]}
-                    className={({ isActive }) =>
-                      `primary-nav__link${isActive ? ' is-active' : ''}`
-                    }
-                    viewTransition
-                    onMouseEnter={() => setActiveFlyout(category.id)}
-                    onMouseLeave={() => setActiveFlyout(null)}
-                    onFocus={() => setActiveFlyout(category.id)}
-                    onBlur={(e) => {
-                      if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) {
-                        setActiveFlyout(null);
-                      }
-                    }}
-                    aria-expanded={activeFlyout === category.id}
-                    aria-haspopup="menu"
-                  >
-                    {category.name}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <HeaderNav />
 
           <div className="site-header__actions">
             <button
@@ -294,8 +268,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      <NavFlyout activeCategory={activeFlyout} onOpen={setActiveFlyout} />
 
       <AnimatePresence>
         {searchOpen && (
