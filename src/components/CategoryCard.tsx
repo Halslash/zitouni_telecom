@@ -1,29 +1,10 @@
-import type { ComponentType } from 'react';
 import { Link } from './AppLink';
-import {
-  CATEGORY_PATHS,
-  getCategoryCount,
-  type Category,
-  type CategoryInfo,
-} from '../data/products';
-import {
-  ArrowUpRightIcon,
-  GamepadIcon,
-  HeadphonesIcon,
-  LaptopIcon,
-  SmartphoneIcon,
-  TabletIcon,
-  type IconProps,
-} from './Icons';
+import type { CategoryInfo } from '../data/products';
+import { CATEGORY_PATHS } from '../data/products';
+import { ChevronRightIcon } from './Icons';
+import ProductImage from './ProductImage';
+import { getProductsByCategory } from '../data/products';
 import './CategoryCard.css';
-
-const CATEGORY_ICONS: Record<Category, ComponentType<IconProps>> = {
-  smartphones: SmartphoneIcon,
-  laptops: LaptopIcon,
-  tablets: TabletIcon,
-  gaming: GamepadIcon,
-  accessories: HeadphonesIcon,
-};
 
 interface CategoryCardProps {
   category: CategoryInfo;
@@ -33,40 +14,39 @@ interface CategoryCardProps {
 
 export default function CategoryCard({
   category,
-  size = 'compact',
-  className,
+  size = 'wide',
+  className = '',
 }: CategoryCardProps) {
-  const Icon = CATEGORY_ICONS[category.id];
-  const count = getCategoryCount(category.id);
+  const products = getProductsByCategory(category.id);
+  const product = products[0];
 
   return (
     <Link
       to={CATEGORY_PATHS[category.id]}
-      className={`category-card category-card--${category.id} category-card--${size}${
-        className ? ` ${className}` : ''
-      }`}
-      aria-label={`${category.name} — ${count} référence${
-        count > 1 ? 's' : ''
-      }`}
+      className={`category-card category-card--${size} ${className}`.trim()}
       viewTransition
+      aria-label={`Explorer ${category.name}`}
     >
-      <span className="category-card__glyph" aria-hidden="true">
-        <Icon size={220} strokeWidth={0.8} />
-      </span>
-
-      <div className="category-card__body">
-        <span className="category-card__count">
-          {count} référence{count > 1 ? 's' : ''}
-        </span>
-
-        <div className="category-card__copy">
-          <h3 className="category-card__name">{category.name}</h3>
-          <p className="category-card__description">{category.description}</p>
+      <div className="category-card__media">
+        {product ? (
+          <ProductImage
+            src={product.image}
+            alt=""
+            category={product.category}
+            view={1}
+          />
+        ) : (
+          <div aria-hidden="true" />
+        )}
+      </div>
+      <div className="category-card__content">
+        <div>
+          <h3 className="category-card__title">{category.name}</h3>
+          <p className="category-card__subtitle">{category.description}</p>
         </div>
-
-        <span className="category-card__cta">
+        <span className="category-card__link">
           Explorer
-          <ArrowUpRightIcon size={16} />
+          <ChevronRightIcon size={14} />
         </span>
       </div>
     </Link>

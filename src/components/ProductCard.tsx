@@ -1,145 +1,76 @@
-import { useEffect, useRef, useState } from 'react';
 import { Link } from './AppLink';
-import { m } from 'motion/react';
-import {
-  useMotionTokens,
-  useShouldReduceMotion,
-} from '@animate-ui/react/utils/motion';
-import { getProductHighlight, type Product } from '../data/products';
-import { formatPrice } from '../lib/format';
 import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import { CheckIcon, HeartIcon, PlusIcon } from './Icons';
+import { formatPrice } from '../lib/format';
+import type { Product } from '../data/products';
+import { ChevronRightIcon } from './Icons';
 import ProductImage from './ProductImage';
 import './ProductCard.css';
 
 interface ProductCardProps {
   product: Product;
-  tone?: 'light' | 'dark';
+  variant?: 'grid' | 'lineup';
 }
 
 export default function ProductCard({
   product,
-  tone = 'light',
+  variant = 'grid',
 }: ProductCardProps) {
   const { add } = useCart();
-  const wishlist = useWishlist();
-  const { spring, transition } = useMotionTokens();
-  const reduceMotion = useShouldReduceMotion();
-  const [added, setAdded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasMounted = useRef(false);
+  const hasColors = product.colors && product.colors.length > 0;
 
-  useEffect(() => {
-    hasMounted.current = true;
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
-
-  const isWishlisted = wishlist.has(product.id);
-
-  const handleAdd = () => {
-    add(product, 1, { variant: product.variants?.[0]?.name });
-    setAdded(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setAdded(false), 1800);
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    add(product, 1);
   };
 
   return (
-    <article
-      className={`product-card${tone === 'dark' ? ' product-card--dark' : ''}`}
-    >
-      <div className="product-card__media">
+    <article className={`product-card product-card--${variant}`}>
+      <Link
+        to={`/produit/${product.id}`}
+        className="product-card__media"
+        aria-label={product.name}
+        viewTransition
+      >
         <ProductImage
           src={product.image}
           alt={product.name}
           category={product.category}
+          view={1}
         />
-
-        <button
-          type="button"
-          className={`product-card__wishlist${
-            isWishlisted ? ' is-active' : ''
-          }`}
-          onClick={() => wishlist.toggle(product.id)}
-          aria-pressed={isWishlisted}
-          aria-label={
-            isWishlisted
-              ? `Retirer ${product.name} des favoris`
-              : `Ajouter ${product.name} aux favoris`
-          }
-        >
-          <m.span
-            key={isWishlisted ? 'filled' : 'outline'}
-            className="product-card__wishlist-icon"
-            initial={
-              hasMounted.current
-                ? {
-                    opacity: 0.4,
-                    scale: reduceMotion ? 1 : 0.6,
-                  }
-                : false
-            }
-            animate={{ opacity: 1, scale: 1 }}
-            transition={spring.pop}
-          >
-            <HeartIcon size={17} filled={isWishlisted} />
-          </m.span>
-        </button>
-      </div>
-
+      </Link>
       <div className="product-card__body">
-        <span className="product-card__brand">{product.brand}</span>
-
-        <h3 className="product-card__name">
-          <Link
-            to={`/produit/${product.id}`}
-            className="product-card__link"
-            viewTransition
-          >
+        <div className="product-card__header">
+          <Link to={`/produit/${product.id}`} className="product-card__name" viewTransition>
             {product.name}
           </Link>
-        </h3>
-
-        <p className="product-card__highlight">
-          {getProductHighlight(product)}
-        </p>
-
-        <div className="product-card__footer">
-          <div className="product-card__price-row">
-            <div className="price">
-              <span className="price__now">{formatPrice(product.price)}</span>
-            </div>
-
-            <button
-              type="button"
-              className={`product-card__add${added ? ' is-added' : ''}`}
-              onClick={handleAdd}
-              aria-label={
-                added
-                  ? `${product.name} ajouté au panier`
-                  : `Ajouter ${product.name} au panier`
-              }
-            >
-              <m.span
-                key={added ? 'added' : 'add'}
-                className="product-card__add-content"
-                initial={{
-                  opacity: 0,
-                  y: reduceMotion ? 0 : 3,
-                }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={transition.fade}
-              >
-                {added ? <CheckIcon size={15} /> : <PlusIcon size={15} />}
-              </m.span>
-            </button>
+          {product.tagline && (
+            <p className="product-card__tagline">{product.tagline}</p>
+          )}
+        </div>
+        {hasColors && (
+          <div className="product-card__colors" aria-label="Couleurs disponibles">
+            {product.colors!.slice(0, 4).map((color) => (
+              <span
+                key={color.name}
+                className="product-card__color-dot"
+                style={{ backgroundColor: color.hex }}
+                title={color.name}
+              />
+            ))}
           </div>
-
-          <span className="visually-hidden" role="status" aria-live="polite">
-            {added ? `${product.name} ajouté au panier` : ''}
-          </span>
+        )}
+        <div className="product-card__meta">
+          <span className="product-card__price">{formatPrice(product.price)}</span>
+        </div>
+        <div className="product-card__actions">
+          <Link to={`/produit/${product.id}`} className="text-link" viewTransition>
+            En savoir plus
+            <ChevronRightIcon size={14} />
+          </Link>
+          <button type="button" className="text-link" onClick={handleAdd}>
+            Ajouter au panier
+            <ChevronRightIcon size={14} />
+          </button>
         </div>
       </div>
     </article>

@@ -48,6 +48,11 @@
   --mauve-300: #b374b8;
   --mauve-100: #f4ecf5;
 
+  /* Background blush sampled from logo /home/hal/zitouni_telecom/1792922875944.jpg
+     Logo pink/mauve dominant sampled: rgb(248,225,233) mixed with white.
+     Derived: 8% of logo pink rgb(248,225,233) + 92% white = #fefcfd */
+  --color-bg-blush: #fefcfd;
+
   /* Functional colours — used only for state, never decoration */
   --green-700: #0f5f3c;
   --green-600: #14724a;
@@ -92,30 +97,23 @@
   --crimson-50: var(--brand-50);
 
   /* ------------------------------------------------------------
-     TYPE — two families, two weights each, six sizes
-     Sora 500/600 · DM Sans 400/500
+     TYPE — Inter variable (400/600), Apple-like stack
      ------------------------------------------------------------ */
 
-  --font-display: 'Sora', 'DM Sans', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-body);
 
-  --text-xs: 0.75rem; /* 12 — metadata, labels */
-  --text-sm: 0.875rem; /* 14 — supporting UI */
-  --text-md: 1rem; /* 16 — body */
-  --text-lg: 1.25rem; /* 20 — product names, leads */
-  --text-heading: clamp(1.75rem, 3.4vw, 2.75rem); /* 28–44 */
-  --text-display: clamp(2.75rem, 6.8vw, 5.5rem); /* 44–88 */
+  --text-xs: 0.75rem; /* 12 */
+  --text-sm: 0.875rem; /* 14 */
+  --text-md: 1.0625rem; /* 17 - Apple body */
+  --text-lg: 1.25rem; /* 20 */
+  --text-heading: clamp(2rem, 4.8vw, 3rem); /* 32–48 */
+  --text-display: clamp(2.75rem, 6.8vw, 5rem); /* 44–80 */
 
-  /* Launch-page override: the home hero needs a 96px ceiling on
-     desktop while keeping the existing 44px mobile floor. */
-  --text-hero: clamp(2.75rem, 7.2vw, 6rem); /* 44–96 */
+  --text-hero: clamp(2.75rem, 7.2vw, 5rem); /* 44–80 */
+  --text-band: clamp(2.25rem, 4.6vw, 3rem); /* 36–48 */
 
-  /* Full-bleed section headline: 36px mobile, 60px desktop. The
-     existing heading step tops out at 44px, which is too quiet for
-     a launch band, so this is a named step rather than a one-off. */
-  --text-band: clamp(2.25rem, 4.6vw, 3.75rem); /* 36–60 */
-
-  /* Legacy aliases folded into the six steps */
   --text-2xs: var(--text-xs);
   --text-base: var(--text-md);
   --text-xl: var(--text-lg);
@@ -126,8 +124,8 @@
   --text-h3: var(--text-lg);
 
   --weight-body: 400;
-  --weight-body-strong: 500;
-  --weight-display: 500;
+  --weight-body-strong: 600;
+  --weight-display: 600;
   --weight-display-strong: 600;
   --weight-regular: var(--weight-body);
   --weight-medium: var(--weight-body-strong);
@@ -135,15 +133,15 @@
   --weight-bold: var(--weight-body-strong);
 
   --leading-none: 1;
-  --leading-tight: 1.06;
-  --leading-heading: 1.12;
+  --leading-tight: 1.05;
+  --leading-heading: 1.0833;
   --leading-snug: 1.32;
-  --leading-body: 1.6;
+  --leading-body: 1.470588;
   --leading-relaxed: 1.7;
 
-  --tracking-display: -0.045em;
-  --tracking-heading: -0.032em;
-  --tracking-body: -0.006em;
+  --tracking-display: -0.015em;
+  --tracking-heading: -0.003em;
+  --tracking-body: -0.022em;
   --tracking-label: 0.1em;
   --tracking-wide: 0.14em;
 
@@ -177,15 +175,15 @@
      LAYOUT
      ------------------------------------------------------------ */
 
-  --container: 1280px;
-  --container-narrow: 1080px;
+  --container: 980px;
+  --container-narrow: 980px;
   --container-copy: 680px;
-  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --gutter: clamp(1.25rem, 4vw, 2.75rem);
   --topbar-h: 44px;
-  --header-main-h: 72px;
+  --header-main-h: 48px;
   --header-h: var(--header-main-h);
-  /* Utility bar + masthead: the amount of fixed chrome above a page. */
-  --chrome-h: calc(var(--topbar-h) + var(--header-main-h));
+  /* Slim header chrome */
+  --chrome-h: var(--header-main-h);
 
   /* ------------------------------------------------------------
      SHAPE — three radii, hairlines, no resting shadows
@@ -194,6 +192,8 @@
   --radius-control: 8px;
   --radius-surface: 12px;
   --radius-panel: 20px;
+  --radius-tile: 28px;
+  --radius-pill: 980px;
 
   --radius-xs: var(--radius-control);
   --radius-sm: var(--radius-control);
@@ -212,18 +212,16 @@
   --shadow-focus: 0 0 0 3px rgb(106 38 49 / 0.18);
 
   /* ------------------------------------------------------------
-     MOTION — slower, smoother, no bounce
+     MOTION — calm, like Apple
      ------------------------------------------------------------ */
 
-  /* One entrance curve for the whole storefront. Hero load-in,
-     scroll reveals and route crossfades all resolve on this value. */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: var(--ease-out);
+  --ease-out: cubic-bezier(0, 0, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0, 0, 0.5, 1);
   --t-fast: 200ms;
-  --t-base: 320ms;
-  --t-slow: 560ms;
-  --t-reveal: 900ms;
+  --t-base: 280ms;
+  --t-slow: 520ms;
+  --t-reveal: 800ms;
 
   /* ------------------------------------------------------------
      SEMANTIC

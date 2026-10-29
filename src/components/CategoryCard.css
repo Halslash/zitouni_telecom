@@ -1,304 +1,72 @@
-/* ============================================================
-   CATEGORY TILE — editorial, not a row of identical boxes
-   Tiles differ by span and scale; the artwork is one oversized
-   line glyph, never a card inside a card.
-   ============================================================ */
-
 .category-card {
   position: relative;
   display: flex;
+  flex-direction: column;
+  min-height: 100%;
   height: 100%;
-  min-height: 190px;
+  border-radius: var(--radius-tile);
+  background: var(--white);
   overflow: hidden;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-panel);
-  color: var(--color-text);
-  isolation: isolate;
-  transition:
-    border-color var(--t-base) var(--ease-out),
-    background-color var(--t-base) var(--ease-out);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity var(--t-fast);
 }
 
-.category-card:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-bg-warm);
-}
-
+.category-card:hover,
 .category-card:focus-visible {
-  outline-offset: 2px;
+  opacity: 0.98;
 }
 
-.category-card__glyph {
-  position: absolute;
-  right: clamp(-2.5rem, -2vw, -1rem);
-  bottom: clamp(-2.5rem, -2vw, -1rem);
-  z-index: 0;
-  display: block;
-  color: var(--brand-700);
-  opacity: 0.09;
-  pointer-events: none;
-  transition:
-    transform var(--t-slow) var(--ease-out),
-    opacity var(--t-base) var(--ease-out);
+.category-card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  flex: 1 1 auto;
+  min-height: 140px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(245, 245, 247, 0.4) 100%);
 }
 
-.category-card__glyph svg {
-  width: clamp(9rem, 14vw, 14rem);
-  height: auto;
+.category-card__media img {
+  width: 100%;
+  height: 100%;
+  max-height: 160px;
+  object-fit: contain;
 }
 
-.category-card:hover .category-card__glyph {
-  transform: translate(-4px, -4px) scale(1.03);
-  opacity: 0.13;
-}
-
-.category-card__body {
-  position: relative;
-  z-index: 1;
+.category-card__content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: var(--space-4);
-  width: 100%;
-  padding: clamp(1.25rem, 2.2vw, 2rem);
-}
-
-.category-card__count {
-  color: var(--color-text-muted);
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-body-strong);
-  letter-spacing: var(--tracking-label);
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.category-card__copy {
-  display: grid;
   gap: var(--space-2);
-  max-width: 32ch;
+  padding: clamp(1.25rem, 3vw, 2rem);
 }
 
-.category-card__name {
+.category-card__title {
+  font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-body);
   margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: var(--weight-display-strong);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-heading);
+  color: var(--ink-900);
 }
 
-.category-card__description {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  text-wrap: pretty;
+.category-card__subtitle {
+  font-size: 0.875rem;
+  line-height: var(--leading-snug);
+  margin: 0;
+  color: var(--ink-600);
 }
 
-.category-card__cta {
+.category-card__link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 32px;
+  gap: var(--space-1);
+  font-size: 0.875rem;
+  color: var(--brand-700);
   margin-top: var(--space-1);
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
-  color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-body-strong);
-  transition:
-    color var(--t-fast) var(--ease-out),
-    border-color var(--t-fast) var(--ease-out);
 }
 
-.category-card__cta svg {
-  transition: transform var(--t-base) var(--ease-out);
-}
-
-.category-card:hover .category-card__cta {
-  color: var(--color-primary);
-  border-bottom-color: currentColor;
-}
-
-.category-card:hover .category-card__cta svg {
-  transform: translate(2px, -2px);
-}
-
-/* ------------------------------------------------------------
-   SCALES
-   ------------------------------------------------------------ */
-
-.category-card--feature {
-  background: var(--brand-50);
-  border-color: var(--brand-100);
-}
-
-.category-card--feature:hover {
-  background: var(--brand-100);
-  border-color: var(--brand-200);
-}
-
-.category-card--feature .category-card__body {
-  gap: var(--space-5);
-  padding: clamp(1.5rem, 3vw, 2.75rem);
-}
-
-.category-card--feature .category-card__copy {
-  max-width: 18ch;
-  gap: var(--space-3);
-}
-
-.category-card--feature .category-card__name {
-  font-size: var(--text-heading);
-  line-height: 0.98;
-}
-
-.category-card--feature .category-card__description {
-  max-width: 30ch;
-}
-
-.category-card--feature .category-card__glyph {
-  right: -3.5rem;
-  bottom: -3.5rem;
-  opacity: 0.11;
-}
-
-.category-card--feature .category-card__glyph svg {
-  width: clamp(13rem, 22vw, 22rem);
-}
-
-.category-card--wide {
-  min-height: 210px;
-}
-
-.category-card--wide .category-card__name {
-  font-size: var(--text-heading);
-}
-
-.category-card--compact {
-  min-height: 210px;
-}
-
-/* Category-specific warmth, kept within the wine family */
-.category-card--gaming {
-  background: var(--brand-950);
-  border-color: var(--brand-950);
-  color: var(--color-text-inverse);
-}
-
-.category-card--gaming:hover {
-  background: var(--brand-900);
-  border-color: var(--brand-900);
-}
-
-.category-card--gaming .category-card__count,
-.category-card--gaming .category-card__description {
-  color: var(--color-text-inverse-muted);
-}
-
-.category-card--gaming .category-card__glyph {
-  color: var(--brand-200);
-  opacity: 0.16;
-}
-
-.category-card--gaming:hover .category-card__glyph {
-  opacity: 0.22;
-}
-
-.category-card--gaming .category-card__cta {
-  color: var(--brand-200);
-}
-
-.category-card--gaming:hover .category-card__cta {
-  color: #fff;
-}
-
-.category-card--tablets {
-  background: var(--color-surface);
-}
-
-.category-card--accessories {
-  background: var(--color-bg-warm);
-}
-
-/* ------------------------------------------------------------
-   DARK BAND — a hairline tile, no filled card
-   ------------------------------------------------------------ */
-
-.on-dark .category-card,
-.on-dark .category-card--feature,
-.on-dark .category-card--tablets,
-.on-dark .category-card--accessories,
-.on-dark .category-card--gaming {
-  background: transparent;
-  border-color: rgb(255 255 255 / 0.14);
-  color: var(--color-text-inverse);
-}
-
-.on-dark .category-card:hover,
-.on-dark .category-card--feature:hover,
-.on-dark .category-card--tablets:hover,
-.on-dark .category-card--accessories:hover,
-.on-dark .category-card--gaming:hover {
-  background: rgb(255 255 255 / 0.05);
-  border-color: rgb(255 255 255 / 0.32);
-}
-
-.on-dark .category-card__count,
-.on-dark .category-card__description {
-  color: var(--color-text-inverse-muted);
-}
-
-.on-dark .category-card__glyph {
-  color: var(--brand-200);
-  opacity: 0.12;
-}
-
-.on-dark .category-card:hover .category-card__glyph {
-  opacity: 0.2;
-}
-
-.on-dark .category-card__cta,
-.on-dark .category-card:hover .category-card__cta {
-  color: var(--brand-200);
-}
-
-.on-dark .category-card:hover .category-card__cta {
-  color: #fff;
-  border-bottom-color: currentColor;
-}
-
-@media (max-width: 600px) {
-  .category-card,
-  .category-card--wide,
-  .category-card--compact {
-    min-height: 200px;
-  }
-
-  .category-card--feature {
-    min-height: 300px;
-  }
-
-  .category-card__body {
-    padding: var(--space-5);
-  }
-
-  .category-card--feature .category-card__body {
-    padding: var(--space-5);
-  }
-
-  .category-card--feature .category-card__name {
-    font-size: var(--text-heading);
-  }
-
-  .category-card__description {
-    font-size: var(--text-xs);
-    line-height: 1.5;
-  }
-
-  .category-card--feature .category-card__description {
-    font-size: var(--text-sm);
-  }
+.category-card:hover .category-card__link,
+.category-card:focus-visible .category-card__link {
+  text-decoration: underline;
 }

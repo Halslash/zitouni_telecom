@@ -235,7 +235,7 @@ function ScreenWallpaper({
         textAnchor="middle"
         fill="#ffffff"
         fillOpacity="0.13"
-        fontFamily="Sora, sans-serif"
+        fontFamily="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
         fontSize={unit * 0.54}
         fontWeight="700"
         letterSpacing={-unit * 0.04}
@@ -613,7 +613,7 @@ function GamingArt({ ids, accent }: { ids: ArtIds; accent: ArtIdsAccent }) {
           textAnchor="middle"
           fill="#ffffff"
           fillOpacity="0.18"
-          fontFamily="Sora, sans-serif"
+          fontFamily="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
           fontSize="22"
           fontWeight="700"
         >
