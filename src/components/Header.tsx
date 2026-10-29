@@ -14,6 +14,7 @@ import {
   useShouldReduceMotion,
 } from '@animate-ui/react/utils/motion';
 import { CATEGORY_PATHS, categories } from '../data/products';
+import type { Category } from '../data/products';
 import { formatNumber } from '../lib/format';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -28,6 +29,7 @@ import {
   SearchIcon,
   ShoppingBagIcon,
 } from './Icons';
+import NavFlyout from './NavFlyout';
 import './Header.css';
 
 function SearchForm({
@@ -98,6 +100,7 @@ export default function Header() {
   const reduceMotion = useShouldReduceMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [activeFlyout, setActiveFlyout] = useState<Category | null>(null);
   const scrollSentinelRef = useRef<HTMLDivElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -206,6 +209,16 @@ export default function Header() {
                       `primary-nav__link${isActive ? ' is-active' : ''}`
                     }
                     viewTransition
+                    onMouseEnter={() => setActiveFlyout(category.id)}
+                    onMouseLeave={() => setActiveFlyout(null)}
+                    onFocus={() => setActiveFlyout(category.id)}
+                    onBlur={(e) => {
+                      if (!e.currentTarget.parentElement?.contains(e.relatedTarget as Node)) {
+                        setActiveFlyout(null);
+                      }
+                    }}
+                    aria-expanded={activeFlyout === category.id}
+                    aria-haspopup="menu"
                   >
                     {category.name}
                   </NavLink>
@@ -281,6 +294,8 @@ export default function Header() {
           </div>
         </div>
       </header>
+
+      <NavFlyout activeCategory={activeFlyout} onOpen={setActiveFlyout} />
 
       <AnimatePresence>
         {searchOpen && (

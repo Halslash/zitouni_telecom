@@ -14,6 +14,7 @@ import AccountPage from './pages/AccountPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { CATEGORY_PATHS } from './data/products';
+import CategoryPageWrapper from './components/CategoryPageWrapper';
 import { MotionProvider } from './lib/motion';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -46,7 +47,7 @@ export const router = createBrowserRouter([
       { path: 'produits', element: <ProductsPage /> },
       ...Object.values(CATEGORY_PATHS).map((path) => ({
         path: path.replace(/^\//, ''),
-        element: <ProductsPage />,
+        element: <CategoryPageWrapper />,
       })),
       { path: 'promotions', element: <Navigate to="/produits" replace /> },
 
@@ -57,7 +58,7 @@ export const router = createBrowserRouter([
       { path: 'aide', element: <HelpPage /> },
 
       // Legacy catalogue URLs are redirected inside ProductsPage.
-      { path: 'produits/:category', element: <ProductsPage /> },
+      { path: 'produits/:category', element: <CategoryPageWrapper /> },
 
       { path: '*', element: <NotFoundPage /> },
     ],

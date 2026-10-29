@@ -1,6 +1,6 @@
 import { Link } from '../components/AppLink';
 import CategoryCard from '../components/CategoryCard';
-import Hero from '../components/Hero';
+import HeroCarousel from '../components/HeroCarousel';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 import {
@@ -22,7 +22,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero />
+      <HeroCarousel />
 
       <section
         className="home-tile home-tile--light"
