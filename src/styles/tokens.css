@@ -50,8 +50,8 @@
 
   /* Background blush sampled from logo /home/hal/zitouni_telecom/1792922875944.jpg
      Logo pink/mauve dominant sampled: rgb(248,225,233) mixed with white.
-     Derived: 8% of logo pink rgb(248,225,233) + 92% white = #fefcfd */
-  --color-bg-blush: #fefcfd;
+     Derived: 42% of logo pink rgb(248,225,233) + 58% white = #fcf2f5 (delta E vs #ffffff ~5.34) */
+  --color-bg-blush: #fcf2f5;
 
   /* Functional colours — used only for state, never decoration */
   --green-700: #0f5f3c;
