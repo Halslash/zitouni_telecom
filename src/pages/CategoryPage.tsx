@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { getCategoryBySlug, getProductsByCategory, CATEGORY_PATHS } from '../data/products';
+import { getCategoryBySlug, getProductsByCategory } from '../data/products';
 import { usePageTitle } from '../lib/usePageTitle';
 import { Link } from '../components/AppLink';
 import ProductImage from '../components/ProductImage';
