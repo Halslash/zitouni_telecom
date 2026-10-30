@@ -29,6 +29,7 @@ export default function CategoryStrip({ category }: CategoryStripProps) {
                 alt=""
                 category={product.category}
                 view={1}
+                variant="bare"
               />
             </div>
             <div className="category-strip__label">{product.name}</div>

@@ -7,6 +7,7 @@ interface BrandLockupProps {
   showDescriptor?: boolean;
   onClick?: () => void;
   viewTransition?: boolean;
+  ariaCurrent?: boolean;
 }
 
 export default function BrandLockup({
@@ -15,6 +16,7 @@ export default function BrandLockup({
   showDescriptor = true,
   onClick,
   viewTransition = true,
+  ariaCurrent = false,
 }: BrandLockupProps) {
   return (
     <Link
@@ -23,6 +25,7 @@ export default function BrandLockup({
         inverse ? ' brand-lockup--inverse' : ''
       }`}
       aria-label="Zitouni Telecom — Accueil"
+      aria-current={ariaCurrent ? 'page' : undefined}
       onClick={onClick}
       viewTransition={viewTransition}
     >

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from './AppLink';
 import { getFeaturedProducts } from '../data/products';
+import type { Category, Product } from '../data/products';
 import ProductImage from './ProductImage';
 import { ChevronRightIcon } from './Icons';
 import './Carousel.css';
@@ -10,31 +11,44 @@ interface Slide {
   title: string;
   tagline: string;
   image?: string;
-  category?: string;
+  category?: Category;
   productId?: string;
   type: 'brand' | 'product';
 }
 
-export default function Carousel() {
-  const featured = getFeaturedProducts(4);
-  const slides: Slide[] = [
-    {
-      id: 'brand',
-      title: 'Votre technologie. Votre choix.',
-      tagline: 'Zitouni Telecom',
-      type: 'brand' as const,
-    },
-    ...featured.map((p) => ({
-      id: p.id,
-      title: p.name,
-      tagline: p.tagline || p.brand,
-      image: p.image,
-      category: p.category,
-      productId: p.id,
-      type: 'product' as const,
-    })),
-  ].slice(0, 4) as Slide[];
+interface CarouselProps {
+  /** Category products. When provided, the brand slide is omitted. */
+  products?: Product[];
+  /** Accessible name for the region. */
+  label?: string;
+}
 
+function toSlide(product: Product): Slide {
+  return {
+    id: product.id,
+    title: product.name,
+    tagline: product.tagline || product.brand,
+    image: product.image,
+    category: product.category,
+    productId: product.id,
+    type: 'product',
+  };
+}
+
+export default function Carousel({ products, label }: CarouselProps = {}) {
+  const slides: Slide[] = products
+    ? products.map(toSlide)
+    : [
+        {
+          id: 'brand',
+          title: 'Votre technologie. Votre choix.',
+          tagline: 'Zitouni Telecom',
+          type: 'brand' as const,
+        } satisfies Slide,
+        ...getFeaturedProducts(3).map(toSlide),
+      ].slice(0, 4);
+
+  const isStatic = slides.length < 2;
   const trackRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -58,6 +72,7 @@ export default function Carousel() {
   };
 
   useEffect(() => {
+    if (isStatic) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion || !playing) {
       if (intervalRef.current) {
@@ -81,11 +96,11 @@ export default function Carousel() {
         intervalRef.current = null;
       }
     };
-  }, [playing, slides.length]);
+  }, [playing, slides.length, isStatic]);
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || isStatic) return;
     const onScroll = () => {
       const slidesEl = track.querySelectorAll('.carousel__slide');
       let best = 0;
@@ -101,7 +116,7 @@ export default function Carousel() {
     };
     track.addEventListener('scroll', onScroll, { passive: true });
     return () => track.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isStatic]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -139,6 +154,7 @@ export default function Carousel() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (isStatic) return;
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
       goTo(Math.max(0, current - 1));
@@ -148,11 +164,77 @@ export default function Carousel() {
     }
   };
 
+  const renderSlide = (slide: Slide, idx: number) => (
+    <article
+      key={slide.id}
+      className={`carousel__slide ${!products && idx === 1 ? 'carousel__slide--dark' : ''}`}
+      aria-roledescription="slide"
+      aria-label={`${idx + 1} sur ${slides.length}`}
+      aria-hidden={!isStatic && idx !== current}
+    >
+      <div className="carousel__content">
+        <div className="carousel__text">
+          <h2 className="carousel__title">{slide.title}</h2>
+          <p className="carousel__tagline">{slide.tagline}</p>
+        </div>
+        <div className="carousel__actions">
+          {slide.type === 'brand' ? (
+            <>
+              <Link to="/produits" className="carousel__btn carousel__btn--filled" viewTransition>
+                Découvrir
+              </Link>
+              <Link to="/aide" className="carousel__btn carousel__btn--ghost" viewTransition>
+                En savoir plus
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to={`/produit/${slide.productId}`}
+                className="carousel__btn carousel__btn--outline"
+                viewTransition
+              >
+                En savoir plus
+                <ChevronRightIcon size={14} />
+              </Link>
+              <Link to="/panier" className="carousel__btn carousel__btn--filled" viewTransition>
+                Ajouter au panier
+              </Link>
+            </>
+          )}
+        </div>
+        <div className="carousel__media">
+          {slide.image ? (
+            <ProductImage
+              src={slide.image}
+              alt={slide.title}
+              category={slide.category}
+              view={1}
+              variant="bare"
+            />
+          ) : (
+            <div className="carousel__media-placeholder" aria-hidden="true" />
+          )}
+        </div>
+      </div>
+    </article>
+  );
+
+  if (isStatic) {
+    return (
+      <section className="carousel carousel--static" aria-label={label ?? 'Sélection en vedette'}>
+        <div className="carousel__container">
+          <div className="carousel__static">{renderSlide(slides[0], 0)}</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className="carousel"
       aria-roledescription="carousel"
-      aria-label="Sélection en vedette"
+      aria-label={label ?? 'Sélection en vedette'}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onFocus={() => setPlaying(false)}
@@ -167,61 +249,7 @@ export default function Carousel() {
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         >
-          {slides.map((slide, idx) => (
-            <article
-              key={slide.id}
-              className={`carousel__slide ${idx === 1 ? 'carousel__slide--dark' : ''}`}
-              aria-roledescription="slide"
-              aria-label={`${idx + 1} sur ${slides.length}`}
-              aria-hidden={idx !== current}
-            >
-              <div className="carousel__content">
-                <div className="carousel__header">
-                  <div className="carousel__text">
-                    <h2 className="carousel__title">{slide.title}</h2>
-                    <p className="carousel__tagline">{slide.tagline}</p>
-                  </div>
-                  <div className="carousel__actions">
-                    {slide.type === 'brand' ? (
-                      <>
-                        <Link to="/produits" className="carousel__btn carousel__btn--filled" viewTransition>
-                          Découvrir
-                        </Link>
-                        <Link to="/aide" className="carousel__btn carousel__btn--ghost" viewTransition>
-                          En savoir plus
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          to={`/produit/${slide.productId}`}
-                          className="carousel__btn carousel__btn--outline"
-                          viewTransition
-                        >
-                          En savoir plus <ChevronRightIcon size={14} />
-                        </Link>
-                        <Link to="/panier" className="carousel__btn carousel__btn--filled" viewTransition>
-                          Ajouter au panier
-                        </Link>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="carousel__media">
-                  {slide.image ? (
-                    <ProductImage
-                      src={slide.image}
-                      alt={slide.title}
-                      category={slide.category as any}
-                      view={1}
-                    />
-                  ) : (
-                    <div className="carousel__media-placeholder" aria-hidden="true" />
-                  )}
-                </div>
-              </div>
-            </article>
-          ))}
+          {slides.map(renderSlide)}
         </div>
       </div>
 

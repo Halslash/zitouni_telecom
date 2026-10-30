@@ -14,6 +14,15 @@ html {
   scroll-padding-top: calc(var(--header-h) + 1.5rem);
 }
 
+/* Anchors and focused controls keep clear of the sticky header. */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+
 body {
   margin: 0;
   min-width: 320px;

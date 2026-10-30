@@ -46,3 +46,18 @@
 .primary-nav__link.is-active {
   opacity: 1;
 }
+
+.primary-nav__link.is-flyout-active {
+  color: var(--brand-700);
+}
+
+.primary-nav__link.is-flyout-active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px 2px 0 0;
+}

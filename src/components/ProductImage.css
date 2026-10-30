@@ -201,6 +201,51 @@
   transform: none;
 }
 
+/* ============================================================
+   BARE — device only, over any surface
+   No plate, no watermark, no rings, no labels. The only shadow
+   is the soft contact shadow under the device.
+   ============================================================ */
+
+.product-visual--bare {
+  --plate-bg: transparent;
+  --plate-ink: currentColor;
+  aspect-ratio: auto;
+  overflow: visible;
+  background: transparent;
+}
+
+.product-visual--bare::before {
+  display: none;
+}
+
+.product-visual--bare::after {
+  content: '';
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  z-index: 1;
+  width: 58%;
+  height: 9%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgb(23 18 20 / 0.2) 0%,
+    rgb(23 18 20 / 0.08) 42%,
+    transparent 72%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.product-visual--bare .product-visual__art {
+  inset: 2% 4% 10%;
+}
+
+.product-visual--bare .product-visual__photo {
+  mix-blend-mode: normal;
+}
+
 /* Category tints stay inside the wine/mauve family */
 .product-visual--smartphones {
   --plate-bg: #f8f4f2;

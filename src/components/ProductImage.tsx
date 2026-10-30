@@ -833,6 +833,12 @@ interface ProductImageProps {
   view?: number;
   /** Hex colour used to repaint the illustration's body. */
   finish?: string;
+  /**
+   * `plate` keeps the catalogue presentation (tint, rings, labels).
+   * `bare` renders the device alone on a transparent field with a
+   * soft contact shadow, for use over coloured surfaces.
+   */
+  variant?: 'plate' | 'bare';
 }
 
 /**
@@ -849,6 +855,7 @@ export default function ProductImage({
   priority = false,
   view = 0,
   finish,
+  variant = 'plate',
 }: ProductImageProps) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -862,7 +869,7 @@ export default function ProductImage({
 
   return (
     <div
-      className={`product-visual product-visual--${category}${
+      className={`product-visual product-visual--${category} product-visual--${variant}${
         className ? ` ${className}` : ''
       }`}
       data-category={category}
@@ -870,20 +877,26 @@ export default function ProductImage({
       aria-label={decorative ? undefined : `${alt} — visuel de démonstration`}
       aria-hidden={decorative || undefined}
     >
-      <span className="product-visual__watermark" aria-hidden="true">
-        Z
-      </span>
-      <span className="product-visual__rings" aria-hidden="true" />
-      <span className="product-visual__category" aria-hidden="true">
-        {CATEGORY_LABELS[category]}
-      </span>
+      {variant === 'plate' && (
+        <>
+          <span className="product-visual__watermark" aria-hidden="true">
+            Z
+          </span>
+          <span className="product-visual__rings" aria-hidden="true" />
+          <span className="product-visual__category" aria-hidden="true">
+            {CATEGORY_LABELS[category]}
+          </span>
+        </>
+      )}
       <span className="product-visual__art" aria-hidden="true">
         <DeviceArt category={category} view={view} finish={finish} />
       </span>
-      <span className="product-visual__meta" aria-hidden="true">
-        <span>Zitouni</span>
-        <span>Édition 2026</span>
-      </span>
+      {variant === 'plate' && (
+        <span className="product-visual__meta" aria-hidden="true">
+          <span>Zitouni</span>
+          <span>Édition 2026</span>
+        </span>
+      )}
 
       {src && !failed && (
         <img

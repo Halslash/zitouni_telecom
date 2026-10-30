@@ -196,7 +196,7 @@ export default function Header() {
             >
               <MenuIcon size={18} />
             </button>
-            <BrandLockup />
+            <BrandLockup ariaCurrent={location.pathname === '/'} />
           </div>
 
           <HeaderNav />

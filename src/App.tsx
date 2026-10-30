@@ -14,6 +14,7 @@ import AccountPage from './pages/AccountPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { CATEGORY_PATHS } from './data/products';
+import CategoryPage from './pages/CategoryPage';
 import CategoryPageWrapper from './components/CategoryPageWrapper';
 import { MotionProvider } from './lib/motion';
 import { CartProvider } from './context/CartContext';
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
       { path: 'produits', element: <ProductsPage /> },
       ...Object.values(CATEGORY_PATHS).map((path) => ({
         path: path.replace(/^\//, ''),
-        element: <CategoryPageWrapper />,
+        element: <CategoryPage />,
       })),
       { path: 'promotions', element: <Navigate to="/produits" replace /> },
 
