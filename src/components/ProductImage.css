@@ -213,6 +213,11 @@
   aspect-ratio: auto;
   overflow: visible;
   background: transparent;
+  transform-style: preserve-3d;
+}
+
+.product-visual--bare .product-visual__art {
+  transform-style: preserve-3d;
 }
 
 .product-visual--bare::before {
@@ -240,6 +245,33 @@
 
 .product-visual--bare .product-visual__art {
   inset: 2% 4% 10%;
+  transform-style: preserve-3d;
+}
+
+/* The contact shadow follows the footprint of each object. */
+.product-visual--bare[data-category='smartphones']::after {
+  bottom: 4%;
+  width: 38%;
+}
+
+.product-visual--bare[data-category='laptops']::after {
+  bottom: 3%;
+  width: 76%;
+}
+
+.product-visual--bare[data-category='tablets']::after {
+  bottom: 4%;
+  width: 54%;
+}
+
+.product-visual--bare[data-category='gaming']::after {
+  bottom: 3%;
+  width: 64%;
+}
+
+.product-visual--bare[data-category='accessories']::after {
+  bottom: 4%;
+  width: 68%;
 }
 
 .product-visual--bare .product-visual__photo {

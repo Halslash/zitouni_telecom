@@ -14,8 +14,8 @@ import './DeviceStrip.css';
 
 /** 30 ms between neighbouring items, matching the site's reveal rhythm. */
 const STAGGER_STEP = 30;
-/** The tilt stays a suggestion, never a showcase. */
-const MAX_TILT = 4.5;
+/** Pointer tilt: strong enough to reveal the stacked faces. */
+const MAX_TILT = 8;
 
 interface DeviceStripProps {
   /** Products already filtered and ordered by the caller. */
@@ -142,9 +142,9 @@ function StripItem({ product, index }: { product: Product; index: number }) {
             alt=""
             category={product.category}
             view={1}
-            variant="bare"
-            width={64}
-            height={64}
+            variant="model"
+            width={88}
+            height={88}
           />
         </span>
       </span>

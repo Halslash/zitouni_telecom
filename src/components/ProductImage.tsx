@@ -1,5 +1,6 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import type { Category } from '../data/products';
+import DeviceModel from './DeviceModel';
 import './ProductImage.css';
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -835,10 +836,11 @@ interface ProductImageProps {
   finish?: string;
   /**
    * `plate` keeps the catalogue presentation (tint, rings, labels).
-   * `bare` renders the device alone on a transparent field with a
-   * soft contact shadow, for use over coloured surfaces.
+   * `bare` renders the line-art device alone on a transparent field.
+   * `model` swaps the line art for the animated CSS 3D miniature,
+   * still with a soft contact shadow for use over coloured surfaces.
    */
-  variant?: 'plate' | 'bare';
+  variant?: 'plate' | 'bare' | 'model';
   /** Intrinsic photo dimensions; CSS still owns the rendered size. */
   width?: number;
   height?: number;
@@ -871,10 +873,12 @@ export default function ProductImage({
   }, [src]);
 
   const decorative = alt.trim().length === 0;
+  const isModel = variant === 'model';
+  const visualVariant = isModel ? 'bare' : variant;
 
   return (
     <div
-      className={`product-visual product-visual--${category} product-visual--${variant}${
+      className={`product-visual product-visual--${category} product-visual--${visualVariant}${
         className ? ` ${className}` : ''
       }`}
       data-category={category}
@@ -894,7 +898,11 @@ export default function ProductImage({
         </>
       )}
       <span className="product-visual__art" aria-hidden="true">
-        <DeviceArt category={category} view={view} finish={finish} />
+        {isModel ? (
+          <DeviceModel category={category} />
+        ) : (
+          <DeviceArt category={category} view={view} finish={finish} />
+        )}
       </span>
       {variant === 'plate' && (
         <span className="product-visual__meta" aria-hidden="true">

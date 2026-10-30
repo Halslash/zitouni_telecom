@@ -210,7 +210,7 @@ export default function Carousel({ products, label }: CarouselProps = {}) {
               alt={slide.title}
               category={slide.category}
               view={1}
-              variant="bare"
+              variant="model"
             />
           ) : (
             <div className="carousel__media-placeholder" aria-hidden="true" />
