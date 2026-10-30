@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
-import CategoryStrip from './CategoryStrip';
+import DeviceStrip from './DeviceStrip';
 import ProductsPage from '../pages/ProductsPage';
-import type { Category } from '../data/products';
+import { getProductsByCategory, type Category } from '../data/products';
 
 const slugToCategory: Record<string, Category> = {
   telephones: 'smartphones',
@@ -17,7 +17,15 @@ export default function CategoryPageWrapper() {
 
   return (
     <>
-      {cat && <CategoryStrip category={cat} />}
+      {cat && (
+        <div className="container">
+          <DeviceStrip
+            products={getProductsByCategory(cat)}
+            label="Produits de la catégorie"
+            context="category"
+          />
+        </div>
+      )}
       <ProductsPage />
     </>
   );

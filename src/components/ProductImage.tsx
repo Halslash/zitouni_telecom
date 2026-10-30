@@ -839,6 +839,9 @@ interface ProductImageProps {
    * soft contact shadow, for use over coloured surfaces.
    */
   variant?: 'plate' | 'bare';
+  /** Intrinsic photo dimensions; CSS still owns the rendered size. */
+  width?: number;
+  height?: number;
 }
 
 /**
@@ -856,6 +859,8 @@ export default function ProductImage({
   view = 0,
   finish,
   variant = 'plate',
+  width,
+  height,
 }: ProductImageProps) {
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -903,6 +908,8 @@ export default function ProductImage({
           src={src}
           alt=""
           className={`product-visual__photo${loaded ? ' is-loaded' : ''}`}
+          width={width}
+          height={height}
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : 'auto'}
           decoding="async"

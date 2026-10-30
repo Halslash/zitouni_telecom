@@ -1,27 +1,37 @@
 import { Link } from '../components/AppLink';
 import CategoryCard from '../components/CategoryCard';
 import Carousel from '../components/Carousel';
+import DeviceStrip from '../components/DeviceStrip';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 import {
   categories,
+  DISCOVERY_CATEGORY_ORDER,
   getFeaturedProducts,
+  getProductsInDiscoveryOrder,
 } from '../data/products';
 import { usePageTitle } from '../lib/usePageTitle';
 import { ChevronRightIcon } from '../components/Icons';
 import './HomePage.css';
 
-const CATEGORY_ORDER = ['smartphones', 'laptops', 'tablets', 'gaming', 'accessories'];
-
 export default function HomePage() {
   usePageTitle();
   const featuredProducts = getFeaturedProducts(6);
-  const orderedCategories = CATEGORY_ORDER.map((id) =>
+  const discoveryProducts = getProductsInDiscoveryOrder();
+  const orderedCategories = DISCOVERY_CATEGORY_ORDER.map((id) =>
     categories.find((c) => c.id === id)
   ).filter(Boolean) as typeof categories;
 
   return (
     <>
+      <div className="container">
+        <DeviceStrip
+          products={discoveryProducts}
+          label="Découvrir les produits"
+          context="home"
+        />
+      </div>
+
       <Carousel />
 
       <section

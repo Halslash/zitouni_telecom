@@ -97,6 +97,19 @@ export const CATEGORY_SLUGS: Record<Category, string> = {
   accessories: 'accessories',
 };
 
+/**
+ * Reading order used by cross-catalogue navigation: phones first, then
+ * computers, tablets, gaming and accessories. Kept next to the data so the
+ * home strip, category cards and any future catalogue surface agree.
+ */
+export const DISCOVERY_CATEGORY_ORDER: Category[] = [
+  'smartphones',
+  'laptops',
+  'tablets',
+  'gaming',
+  'accessories',
+];
+
 export const products: Product[] = [
   {
     id: 'galaxy-s25-ultra',
@@ -264,6 +277,17 @@ export function getCategoryBySlug(
 
 export function getProductsByCategory(category: Category): Product[] {
   return products.filter((product) => product.category === category);
+}
+
+/**
+ * Every product, grouped by the discovery category order while preserving
+ * the catalogue order inside each group. Used by the home strip so the
+ * ordering lives with the data rather than in a page component.
+ */
+export function getProductsInDiscoveryOrder(): Product[] {
+  return DISCOVERY_CATEGORY_ORDER.flatMap((category) =>
+    getProductsByCategory(category)
+  );
 }
 
 export function getCategoryCount(category: Category): number {
