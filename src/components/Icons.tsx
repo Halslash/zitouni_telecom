@@ -300,3 +300,25 @@ export function GamepadIcon(props: IconProps) {
     </Icon>
   );
 }
+
+export function CableIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M8 3v5M16 3v5" />
+      <path d="M6 8h12v2a6 6 0 0 1-6 6v0a6 6 0 0 1-6-6V8Z" />
+      <path d="M12 16v5" />
+      <path d="M9.5 21h5" />
+    </Icon>
+  );
+}
+
+export function GridIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </Icon>
+  );
+}

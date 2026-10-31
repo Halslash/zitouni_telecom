@@ -9,7 +9,13 @@ export default function Footer() {
       <div className="container site-footer__inner">
         <div className="site-footer__top">
           <BrandLockup showDescriptor />
+
+          <p className="site-footer__statement">
+            Téléphonie, informatique et accessoires choisis avec soin,
+            conseillés en magasin à Alger.
+          </p>
         </div>
+
         <div className="site-footer__grid">
           <div className="site-footer__column">
             <p className="site-footer__heading">Boutique</p>
@@ -23,6 +29,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
           <div className="site-footer__column">
             <p className="site-footer__heading">Aide</p>
             <ul className="site-footer__list">
@@ -32,8 +39,34 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/aide#livraison" viewTransition>
+                  Livraison
+                </Link>
+              </li>
+              <li>
+                <Link to="/aide#paiement" viewTransition>
+                  Paiement
+                </Link>
+              </li>
+              <li>
+                <Link to="/aide#garantie" viewTransition>
+                  Garantie &amp; retours
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="site-footer__column">
+            <p className="site-footer__heading">Mon espace</p>
+            <ul className="site-footer__list">
+              <li>
                 <Link to="/compte" viewTransition>
                   Compte
+                </Link>
+              </li>
+              <li>
+                <Link to="/favoris" viewTransition>
+                  Favoris
                 </Link>
               </li>
               <li>
@@ -44,9 +77,13 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
         <div className="site-footer__bottom">
           <p className="site-footer__copy">
             © {new Date().getFullYear()} Zitouni Telecom
+          </p>
+          <p className="site-footer__services">
+            Livraison dans les 58 wilayas · Paiement à la livraison
           </p>
         </div>
       </div>

@@ -1,15 +1,15 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { Link } from '../components/AppLink';
+import Carousel from '../components/Carousel';
+import ProductImage from '../components/ProductImage';
 import { getCategoryBySlug, getProductsByCategory } from '../data/products';
 import { usePageTitle } from '../lib/usePageTitle';
-import DeviceStrip from '../components/DeviceStrip';
-import ProductCard from '../components/ProductCard';
-import Carousel from '../components/Carousel';
+import { formatPrice } from '../lib/format';
+import { ChevronRightIcon } from '../components/Icons';
 import './CategoryPage.css';
 
 export default function CategoryPage() {
-  const { category: categorySlug } = useParams<{ category: string }>();
-  const { pathname } = useLocation();
-  const category = getCategoryBySlug(categorySlug ?? pathname);
+  const slug = location.pathname.replace(/^\//, '');
+  const category = getCategoryBySlug(slug);
   usePageTitle(category?.name);
 
   if (!category) {
@@ -19,35 +19,58 @@ export default function CategoryPage() {
   const products = getProductsByCategory(category.id);
 
   return (
-    <section className="category-page" aria-labelledby="category-title">
+    <main className="category-page">
       <div className="container">
         <header className="category-page__header">
-          <h1 id="category-title" className="category-page__title">
-            {category.name}
-          </h1>
+          <h1 className="category-page__title">{category.name}</h1>
         </header>
 
-        <DeviceStrip
-          products={products}
-          label={`Produits ${category.name}`}
-          context="category"
-        />
+        <section className="category-strip-page" aria-label="Produits de la catégorie">
+          <div className="category-strip-page__track">
+            {products.map((product) => (
+              <Link
+                key={product.id}
+                to={`/produit/${product.id}`}
+                className="category-strip-page__item"
+                viewTransition
+              >
+                <div className="category-strip-page__thumb">
+                  <ProductImage src={product.image} alt="" category={product.category} view={1} variant="bare" />
+                </div>
+                <div className="category-strip-page__label">{product.name}</div>
+                {product.featured && <span className="category-strip-page__tag">Nouveau</span>}
+              </Link>
+            ))}
+          </div>
+        </section>
 
-        <section className="category-page__carousel" aria-label={`Sélection ${category.name}`}>
+        <section className="category-page__carousel" aria-label="Sélection de la catégorie">
           <Carousel products={products} label={`Sélection ${category.name}`} />
         </section>
 
-        <section className="category-page__lineup" aria-labelledby="category-lineup-title">
-          <h2 id="category-lineup-title" className="category-page__section-title">
-            La gamme
-          </h2>
-          <div className="category-page__list">
+        <section className="category-page__list-section" aria-label="Tous les produits">
+          <h2 className="category-page__list-title">Tous les produits</h2>
+          <div className="category-page__grid">
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} variant="lineup" />
+              <article key={product.id} className="category-card">
+                <Link to={`/produit/${product.id}`} className="category-card__link" viewTransition>
+                  <div className="category-card__media">
+                    <ProductImage src={product.image} alt={product.name} category={product.category} view={1} variant="bare" />
+                  </div>
+                  <div className="category-card__body">
+                    <h3 className="category-card__title">{product.name}</h3>
+                    <p className="category-card__line">{product.tagline || product.brand}</p>
+                    <div className="category-card__price">{formatPrice(product.price)}</div>
+                    <div className="category-card__cta">
+                      En savoir plus <ChevronRightIcon size={14} />
+                    </div>
+                  </div>
+                </Link>
+              </article>
             ))}
           </div>
         </section>
       </div>
-    </section>
+    </main>
   );
 }

@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from './AppLink';
-import { getProductsByCategory } from '../data/products';
+import {
+  CATEGORY_PATHS,
+  getProductsByCategory,
+} from '../data/products';
 import type { Category } from '../data/products';
+import { formatPrice } from '../lib/format';
 import ProductImage from './ProductImage';
+import { ChevronRightIcon } from './Icons';
 import './NavFlyout.css';
 
 export const NAV_FLYOUT_ID = 'site-nav-flyout';
@@ -22,17 +27,9 @@ const CATEGORY_LABELS: Record<Category, string> = {
   accessories: 'Accessoires',
 };
 
-const CATEGORY_PATHS: Record<Category, string> = {
-  smartphones: '/telephones',
-  laptops: '/ordinateurs',
-  tablets: '/tablettes',
-  gaming: '/gaming',
-  accessories: '/accessoires',
-};
-
-const OUT_MS = 140;
-const IN_MS = 350;
-const OPEN_MS = 200;
+const OUT_MS = 120;
+const IN_MS = 240;
+const OPEN_MS = 140;
 
 export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
   const [state, setState] = useState<FlyoutState>('closed');
@@ -151,16 +148,15 @@ export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
             key={`${displayCategory}-${contentKey}`}
           >
             <div className="nav-flyout__col" style={{ animationDelay: '0ms' }}>
-              <div className="nav-flyout__label">
-                Explorer les {CATEGORY_LABELS[displayCategory].toLowerCase()}
-              </div>
+              <div className="nav-flyout__label">Dans cette catégorie</div>
               <Link
                 to={categoryPath}
                 className="nav-flyout__link nav-flyout__link--large"
                 viewTransition
                 onClick={() => onOpen(null)}
               >
-                Tout voir ›
+                Tout voir
+                <ChevronRightIcon size={16} />
               </Link>
               {products.map((product) => (
                 <Link
@@ -179,7 +175,14 @@ export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
                       variant="bare"
                     />
                   </span>
-                  {product.name}
+                  <span className="nav-flyout__product">
+                    <span className="nav-flyout__product-name">
+                      {product.name}
+                    </span>
+                    <span className="nav-flyout__product-price">
+                      {formatPrice(product.price)}
+                    </span>
+                  </span>
                 </Link>
               ))}
             </div>

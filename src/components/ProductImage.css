@@ -1,15 +1,14 @@
 /* ============================================================
-   PRODUCT VISUAL — one branded catalogue plate for every product
-   A soft tinted field, a pair of hairline rings and the line-art
-   product. No photography exists in the project, so this is the
-   single consistent fallback.
+   PRODUCT VISUAL
+   A catalogue specimen, not a fake photograph: one warm neutral
+   field, a hairline ring and the category glyph. Photography, when
+   it exists, simply covers the plate.
    ============================================================ */
 
 .product-visual {
-  --plate-bg: #f7f4f1;
-  --plate-ink: var(--ink-600);
-  --plate-line: #e6ddd8;
-  --plate-glow: rgb(106 38 49 / 0.1);
+  --plate-accent: var(--brand-700);
+  --plate-tint: #f7eef0;
+  --plate-tint-2: #f0e3e6;
   position: relative;
   display: block;
   width: 100%;
@@ -17,164 +16,158 @@
   min-height: 100%;
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--plate-bg);
-  color: var(--plate-ink);
+  background: var(--plate-tint);
+  color: var(--plate-accent);
   isolation: isolate;
+  container-type: inline-size;
 }
 
-.product-visual::before {
-  content: '';
+.product-visual--smartphones {
+  --plate-accent: #6a2631;
+  --plate-tint: #f8eff1;
+  --plate-tint-2: #efe0e4;
+}
+
+.product-visual--laptops {
+  --plate-accent: #5f4a70;
+  --plate-tint: #f4f0f7;
+  --plate-tint-2: #e9e2ef;
+}
+
+.product-visual--tablets {
+  --plate-accent: #8a4f61;
+  --plate-tint: #f8f0f2;
+  --plate-tint-2: #f0e1e5;
+}
+
+.product-visual--gaming {
+  --plate-accent: #4b2c3f;
+  --plate-tint: #f4edf1;
+  --plate-tint-2: #e9dfe5;
+}
+
+.product-visual--accessories {
+  --plate-accent: #6d585d;
+  --plate-tint: #f5f0ed;
+  --plate-tint-2: #ebe3df;
+}
+
+.product-visual__field {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(
-    circle at 50% 44%,
-    var(--plate-glow) 0%,
-    transparent 64%
+  background:
+    radial-gradient(90% 76% at 50% 12%, #fff 0%, transparent 62%),
+    linear-gradient(
+      155deg,
+      var(--plate-tint) 0%,
+      #fbf8f7 48%,
+      var(--plate-tint-2) 100%
+    );
+}
+
+.product-visual__field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--plate-accent) 5%, transparent) 1px,
+    transparent 1px
   );
-  pointer-events: none;
+  background-size: 25% 100%;
+  opacity: 0.4;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
 }
 
-.product-visual__watermark {
+.product-visual__label,
+.product-visual__mark,
+.product-visual__note {
   position: absolute;
-  top: -0.14em;
-  right: -0.08em;
-  z-index: 0;
-  color: var(--plate-ink);
-  font-family: var(--font-display);
-  font-size: clamp(8rem, 19vw, 19rem);
-  font-weight: var(--weight-display-strong);
-  letter-spacing: -0.1em;
-  line-height: 0.82;
-  opacity: 0.04;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: clamp(0.5625rem, 2.8cqw, 0.75rem);
+  font-weight: var(--weight-body-strong);
+  line-height: 1;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
   pointer-events: none;
-  user-select: none;
 }
 
-.product-visual__rings {
+.product-visual__label {
+  top: 7%;
+  left: 8%;
+  color: color-mix(in srgb, var(--plate-accent) 76%, transparent);
+}
+
+.product-visual__mark {
+  right: 8%;
+  bottom: 7%;
+  color: color-mix(in srgb, var(--plate-accent) 48%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.product-visual__note {
+  bottom: 7%;
+  left: 8%;
+  color: color-mix(in srgb, var(--plate-accent) 50%, transparent);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.product-visual__artifact {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.product-visual__rings::before,
-.product-visual__rings::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border: 1px solid var(--plate-line);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.product-visual__rings::before {
-  width: 64%;
-  aspect-ratio: 1;
-  opacity: 0.6;
-}
-
-.product-visual__rings::after {
-  width: 46%;
-  aspect-ratio: 1;
-  opacity: 0.36;
-}
-
-.product-visual__category {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--plate-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-body-strong);
-  letter-spacing: var(--tracking-label);
-  line-height: 1;
-  text-transform: uppercase;
-  opacity: 0.72;
-}
-
-.product-visual__category::before {
-  content: '';
-  width: 4px;
-  height: 4px;
-  flex-shrink: 0;
-  background: currentColor;
-  border-radius: 50%;
-  opacity: 0.6;
-}
-
-.product-visual__art {
-  position: absolute;
-  inset: 9% 5% 7%;
-  z-index: 2;
+  z-index: 1;
   display: grid;
   place-items: center;
   pointer-events: none;
 }
 
-.product-art {
+.product-visual__halo {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  transition: transform var(--t-slow) var(--ease-out);
-}
-
-.product-art--view-1 {
-  transform: scale(1.05) rotate(1.2deg);
-}
-
-.product-art--view-2 {
-  transform: scale(1.1) translateY(-1.5%);
-}
-
-/* Decorative registration line — hidden on small plates */
-.product-visual__meta {
-  position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  left: var(--space-3);
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--plate-line);
-  color: var(--plate-ink);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-body-strong);
-  letter-spacing: var(--tracking-label);
-  line-height: 1;
-  text-transform: uppercase;
-  opacity: 0.5;
-}
-
-.product-visual__meta span:first-child {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.product-visual__meta span:first-child::before {
-  content: 'ZT';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  background: currentColor;
+  width: 62%;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--plate-accent) 11%, transparent);
   border-radius: 50%;
-  color: var(--plate-bg);
-  font-size: 8px;
-  letter-spacing: 0;
+}
+
+.product-visual__halo::before {
+  content: '';
+  position: absolute;
+  inset: 9%;
+  border: 1px solid color-mix(in srgb, var(--plate-accent) 7%, transparent);
+  border-radius: inherit;
+}
+
+.product-visual__glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38%;
+  max-width: 184px;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--plate-accent) 13%, #fff);
+  border-radius: 50%;
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, #fff 88%, var(--plate-tint) 12%),
+      color-mix(in srgb, #fff 70%, var(--plate-finish, var(--plate-tint-2)) 30%)
+    );
+  box-shadow:
+    0 22px 38px -30px rgb(23 18 20 / 0.45),
+    inset 0 1px 0 #fff;
+  color: color-mix(in srgb, var(--plate-accent) 88%, #000);
+  transition:
+    transform var(--t-slow) var(--ease-out),
+    box-shadow var(--t-slow) var(--ease-out);
+}
+
+.product-visual__glyph svg {
+  width: 34%;
+  height: 34%;
 }
 
 .product-visual__photo {
@@ -183,173 +176,44 @@
   z-index: 4;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
-  mix-blend-mode: multiply;
+  object-fit: cover;
   opacity: 0;
-  filter: blur(6px);
-  transform: scale(1.015);
-  transition:
-    opacity var(--t-slow) var(--ease-out),
-    filter var(--t-slow) var(--ease-out),
-    transform var(--t-slow) var(--ease-out);
+  transition: opacity var(--t-base) var(--ease-out);
 }
 
 .product-visual__photo.is-loaded {
   opacity: 1;
-  filter: none;
-  transform: none;
 }
 
-/* ============================================================
-   BARE — device only, over any surface
-   No plate, no watermark, no rings, no labels. The only shadow
-   is the soft contact shadow under the device.
-   ============================================================ */
-
+/* Compact navigation thumbnail: glyph only, no plate furniture. */
 .product-visual--bare {
-  --plate-bg: transparent;
-  --plate-ink: currentColor;
-  aspect-ratio: auto;
-  overflow: visible;
   background: transparent;
-  transform-style: preserve-3d;
+  overflow: visible;
 }
 
-.product-visual--bare .product-visual__art {
-  transform-style: preserve-3d;
-}
-
-.product-visual--bare::before {
+.product-visual--bare .product-visual__field {
   display: none;
 }
 
-.product-visual--bare::after {
-  content: '';
-  position: absolute;
-  bottom: 5%;
-  left: 50%;
-  z-index: 1;
-  width: 58%;
-  height: 9%;
-  transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse at center,
-    rgb(23 18 20 / 0.2) 0%,
-    rgb(23 18 20 / 0.08) 42%,
-    transparent 72%
-  );
-  filter: blur(6px);
-  pointer-events: none;
-}
-
-.product-visual--bare .product-visual__art {
-  inset: 2% 4% 10%;
-  transform-style: preserve-3d;
-}
-
-/* The contact shadow follows the footprint of each object. */
-.product-visual--bare[data-category='smartphones']::after {
-  bottom: 4%;
-  width: 38%;
-}
-
-.product-visual--bare[data-category='laptops']::after {
-  bottom: 3%;
-  width: 76%;
-}
-
-.product-visual--bare[data-category='tablets']::after {
-  bottom: 4%;
-  width: 54%;
-}
-
-.product-visual--bare[data-category='gaming']::after {
-  bottom: 3%;
-  width: 64%;
-}
-
-.product-visual--bare[data-category='accessories']::after {
-  bottom: 4%;
+.product-visual--bare .product-visual__halo {
   width: 68%;
 }
 
-.product-visual--bare .product-visual__photo {
-  mix-blend-mode: normal;
+.product-visual--bare .product-visual__glyph {
+  width: 72%;
+  border-color: color-mix(in srgb, var(--plate-accent) 10%, transparent);
+  background: radial-gradient(120% 120% at 50% 20%, #fff 0%, color-mix(in srgb, #fff 70%, var(--plate-tint) 30%) 100%);
+  box-shadow: none;
 }
 
-/* Category tints stay inside the wine/mauve family */
-.product-visual--smartphones {
-  --plate-bg: #f8f4f2;
-  --plate-ink: #6a2631;
-  --plate-line: #e2c9cf;
-  --plate-glow: rgb(106 38 49 / 0.12);
+.product-visual--bare .product-visual__glyph svg {
+  width: 44%;
+  height: 44%;
 }
 
-.product-visual--laptops {
-  --plate-bg: #f7f4f4;
-  --plate-ink: #4e2a62;
-  --plate-line: #dcc9ed;
-  --plate-glow: rgb(127 64 166 / 0.12);
-}
-
-.product-visual--tablets {
-  --plate-bg: #f8f5f3;
-  --plate-ink: #531923;
-  --plate-line: #e8dade;
-  --plate-glow: rgb(147 74 88 / 0.1);
-}
-
-.product-visual--gaming {
-  --plate-bg: #f8f4f3;
-  --plate-ink: #531923;
-  --plate-line: #e5c8d0;
-  --plate-glow: rgb(113 28 61 / 0.12);
-}
-
-.product-visual--accessories {
-  --plate-bg: #f8f5f3;
-  --plate-ink: #3d1119;
-  --plate-line: #e2d4d7;
-  --plate-glow: rgb(106 38 49 / 0.09);
-}
-
-/* Dark commerce surfaces */
-.product-card--dark .product-visual,
-.on-dark .product-visual {
-  --plate-bg: var(--brand-900);
-  --plate-ink: var(--brand-200);
-  --plate-line: rgb(255 255 255 / 0.14);
-  --plate-glow: rgb(196 154 163 / 0.16);
-}
-
-.product-card--dark .product-visual::before,
-.on-dark .product-visual::before {
-  background: radial-gradient(
-    circle at 50% 44%,
-    var(--plate-glow) 0%,
-    transparent 64%
-  );
-}
-
-.product-card--dark .product-visual__watermark,
-.on-dark .product-visual__watermark {
-  opacity: 0.05;
-}
-
-@media (max-width: 520px) {
-  .product-visual__category {
-    top: var(--space-2);
-    left: var(--space-2);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-  }
-
-  .product-visual__meta {
-    display: none;
-  }
-
-  .product-visual__art {
-    inset: 12% 5% 13%;
+@media (prefers-reduced-motion: reduce) {
+  .product-visual__glyph,
+  .product-visual__photo {
+    transition: none;
   }
 }

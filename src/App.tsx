@@ -13,9 +13,8 @@ import WishlistPage from './pages/WishlistPage';
 import AccountPage from './pages/AccountPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { CATEGORY_PATHS } from './data/products';
 import CategoryPage from './pages/CategoryPage';
-import CategoryPageWrapper from './components/CategoryPageWrapper';
+import { CATEGORY_PATHS } from './data/products';
 import { MotionProvider } from './lib/motion';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -58,8 +57,8 @@ export const router = createBrowserRouter([
       { path: 'compte', element: <AccountPage /> },
       { path: 'aide', element: <HelpPage /> },
 
-      // Legacy catalogue URLs are redirected inside ProductsPage.
-      { path: 'produits/:category', element: <CategoryPageWrapper /> },
+      // Legacy catalogue URLs are handled by the same catalogue page.
+      { path: 'produits/:category', element: <ProductsPage /> },
 
       { path: '*', element: <NotFoundPage /> },
     ],

@@ -108,15 +108,16 @@
   --text-sm: 0.875rem; /* 14 */
   --text-md: 1.0625rem; /* 17 - Apple body */
   --text-lg: 1.25rem; /* 20 */
-  --text-heading: clamp(2rem, 4.8vw, 3rem); /* 32–48 */
-  --text-display: clamp(2.75rem, 6.8vw, 5rem); /* 44–80 */
+  --text-xl: 1.5rem; /* 24 */
+  --text-heading: clamp(2rem, 4.4vw, 2.875rem); /* 32–46 */
+  --text-display: clamp(2.75rem, 6.2vw, 4.75rem); /* 44–76 */
 
-  --text-hero: clamp(2.75rem, 7.2vw, 5rem); /* 44–80 */
-  --text-band: clamp(2.25rem, 4.6vw, 3rem); /* 36–48 */
+  --text-hero: clamp(2.6rem, 6.6vw, 4.5rem); /* 42–72 */
+  --text-band: clamp(2.25rem, 4.2vw, 2.875rem); /* 36–46 */
 
   --text-2xs: var(--text-xs);
   --text-base: var(--text-md);
-  --text-xl: var(--text-lg);
+  --text-xl: 1.5rem;
   --text-2xl: var(--text-heading);
   --text-3xl: var(--text-heading);
   --text-h1: var(--text-display);
@@ -139,11 +140,11 @@
   --leading-body: 1.470588;
   --leading-relaxed: 1.7;
 
-  --tracking-display: -0.015em;
-  --tracking-heading: -0.003em;
-  --tracking-body: -0.022em;
-  --tracking-label: 0.1em;
-  --tracking-wide: 0.14em;
+  --tracking-display: -0.032em;
+  --tracking-heading: -0.018em;
+  --tracking-body: -0.012em;
+  --tracking-label: 0.11em;
+  --tracking-wide: 0.15em;
 
   /* ------------------------------------------------------------
      SPACING — 4 / 8 px rhythm only
@@ -165,8 +166,8 @@
   --space-24: 11rem; /* 176 */
   --space-32: 14rem; /* 224 */
 
-  --section-y: clamp(4.5rem, 8vw, 7.5rem);
-  --section-y-tight: clamp(3rem, 5vw, 4.5rem);
+  --section-y: clamp(4rem, 7vw, 7rem);
+  --section-y-tight: clamp(2.75rem, 4.5vw, 4.25rem);
 
   /* Full-bleed launch bands: 80px on mobile, 128–192px on desktop. */
   --section-band: clamp(5rem, 10vw, 12rem);
@@ -175,53 +176,52 @@
      LAYOUT
      ------------------------------------------------------------ */
 
-  --container: 980px;
+  --container: 1200px;
   --container-narrow: 980px;
-  --container-copy: 680px;
-  --gutter: clamp(1.25rem, 4vw, 2.75rem);
+  --container-copy: 660px;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
   --topbar-h: 44px;
-  --header-main-h: 48px;
+  --header-main-h: 56px;
   --header-h: var(--header-main-h);
   /* Slim header chrome */
   --chrome-h: var(--header-main-h);
 
   /* ------------------------------------------------------------
-     SHAPE — three radii, hairlines, no resting shadows
+     SHAPE — one radius family, hairline borders, no resting shadows
      ------------------------------------------------------------ */
 
-  --radius-control: 8px;
-  --radius-surface: 12px;
+  --radius-control: 10px;
+  --radius-surface: 14px;
   --radius-panel: 20px;
-  --radius-tile: 28px;
-  --radius-pill: 980px;
+  --radius-tile: 24px;
+  --radius-pill: 999px;
 
   --radius-xs: var(--radius-control);
   --radius-sm: var(--radius-control);
   --radius-md: var(--radius-surface);
   --radius-lg: var(--radius-panel);
   --radius-xl: var(--radius-panel);
-  --radius-pill: var(--radius-control);
 
   --border-width: 1px;
-  --shadow-xs: none;
-  --shadow-sm: none;
-  --shadow-md: 0 24px 56px -32px rgb(23 18 20 / 0.28);
-  --shadow-lg: 0 32px 80px -36px rgb(23 18 20 / 0.36);
-  --shadow-overlay: 0 32px 80px -32px rgb(23 18 20 / 0.4);
-  --shadow-header: 0 18px 36px -32px rgb(23 18 20 / 0.45);
-  --shadow-focus: 0 0 0 3px rgb(106 38 49 / 0.18);
+  --shadow-xs: 0 1px 2px rgb(23 18 20 / 0.04);
+  --shadow-sm: 0 2px 8px rgb(23 18 20 / 0.04);
+  --shadow-md: 0 18px 36px -26px rgb(23 18 20 / 0.3);
+  --shadow-lg: 0 32px 70px -34px rgb(23 18 20 / 0.36);
+  --shadow-overlay: 0 30px 70px -28px rgb(23 18 20 / 0.38);
+  --shadow-header: 0 12px 30px -28px rgb(23 18 20 / 0.45);
+  --shadow-focus: 0 0 0 3px rgb(106 38 49 / 0.16);
 
   /* ------------------------------------------------------------
-     MOTION — calm, like Apple
+     MOTION — calm, decisive, gone before it is noticed
      ------------------------------------------------------------ */
 
-  --ease-out: cubic-bezier(0, 0, 0.5, 1);
-  --ease-in-out: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --ease-spring: cubic-bezier(0, 0, 0.5, 1);
-  --t-fast: 200ms;
-  --t-base: 280ms;
-  --t-slow: 520ms;
-  --t-reveal: 800ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 160ms;
+  --t-base: 240ms;
+  --t-slow: 420ms;
+  --t-reveal: 620ms;
 
   /* ------------------------------------------------------------
      SEMANTIC
@@ -309,12 +309,13 @@
 
 @media (max-width: 980px) {
   :root {
-    --header-main-h: 64px;
+    --header-main-h: 58px;
   }
 }
 
 @media (max-width: 600px) {
   :root {
-    --header-main-h: 60px;
+    --header-main-h: 56px;
+    --gutter: 1rem;
   }
 }

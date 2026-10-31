@@ -21,11 +21,13 @@ import { lockBodyScroll, unlockBodyScroll } from '../lib/scrollLock';
 import { lockAppInert, unlockAppInert } from '../lib/appInert';
 import { trapTabKey } from '../lib/focusTrap';
 import {
+  ChevronRightIcon,
   CloseIcon,
   HeartIcon,
   MenuIcon,
   SearchIcon,
   ShoppingBagIcon,
+  UserIcon,
 } from './Icons';
 import HeaderNav from './HeaderNav';
 import { categories } from '../data/products';
@@ -86,8 +88,13 @@ function SearchForm({
         placeholder="Rechercher"
         autoComplete="off"
       />
-      <button type="submit" className="header-search__submit">
-        Rechercher
+      <button
+        type="submit"
+        className="header-search__submit"
+        aria-label="Rechercher"
+      >
+        <span className="header-search__submit-label">Rechercher</span>
+        <ChevronRightIcon size={15} className="header-search__submit-icon" />
       </button>
     </form>
   );
@@ -241,9 +248,22 @@ export default function Header() {
             </Link>
 
             <Link
+              to="/compte"
+              className="header-icon-btn header-icon-btn--account"
+              aria-label="Mon compte"
+              viewTransition
+            >
+              <span className="header-icon-btn__icon">
+                <UserIcon size={18} />
+              </span>
+            </Link>
+
+            <Link
               to="/panier"
               className="header-icon-btn header-icon-btn--cart"
-              aria-label="Panier"
+              aria-label={
+                itemCount > 0 ? `Panier, ${itemCount} article(s)` : 'Panier'
+              }
               viewTransition
             >
               <span className="header-icon-btn__icon">
@@ -332,7 +352,14 @@ export default function Header() {
                     <CloseIcon size={18} />
                   </button>
                 </header>
+                <div className="mobile-drawer__search">
+                  <SearchForm
+                    onSubmitted={() => setMobileOpen(false)}
+                    viewTransition={false}
+                  />
+                </div>
                 <nav className="mobile-drawer__nav" aria-label="Navigation mobile">
+                  <p className="mobile-drawer__label">Boutique</p>
                   <ul className="mobile-nav__list">
                     {categories.map((category) => (
                       <li key={category.id}>
@@ -343,30 +370,37 @@ export default function Header() {
                           }
                           viewTransition
                         >
-                          {category.name}
+                          <span>{category.name}</span>
+                          <ChevronRightIcon size={16} />
                         </NavLink>
                       </li>
                     ))}
                   </ul>
+
+                  <p className="mobile-drawer__label">Mon espace</p>
                   <ul className="mobile-nav__list mobile-nav__list--secondary">
                     <li>
                       <Link to="/favoris" viewTransition>
-                        Favoris
+                        <span>Favoris</span>
+                        <ChevronRightIcon size={16} />
                       </Link>
                     </li>
                     <li>
                       <Link to="/panier" viewTransition>
-                        Panier
+                        <span>Panier</span>
+                        <ChevronRightIcon size={16} />
                       </Link>
                     </li>
                     <li>
                       <Link to="/compte" viewTransition>
-                        Compte
+                        <span>Compte</span>
+                        <ChevronRightIcon size={16} />
                       </Link>
                     </li>
                     <li>
                       <Link to="/aide" viewTransition>
-                        Aide
+                        <span>Aide</span>
+                        <ChevronRightIcon size={16} />
                       </Link>
                     </li>
                   </ul>

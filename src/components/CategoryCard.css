@@ -1,83 +1,184 @@
+/* ============================================================
+   CATEGORY CARD
+   A tinted specimen strip, then the category name, a short
+   description, the real product count and one quiet action.
+   ============================================================ */
+
 .category-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
   height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-tile);
   background: var(--white);
-  overflow: hidden;
-  text-decoration: none;
   color: inherit;
-  border: 1px solid rgba(106, 38, 49, 0.06);
-  box-shadow: none;
-  transition: opacity var(--t-fast);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform var(--t-base) var(--ease-out),
+    border-color var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out);
 }
 
-.category-card:hover,
-.category-card:focus-visible {
-  opacity: 0.98;
+.category-card__art {
+  position: relative;
+  flex: 0 0 auto;
+  height: clamp(140px, 16vw, 190px);
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--brand-50);
 }
 
-.category-card:focus-visible {
-  outline: 2px solid var(--brand-700);
-  outline-offset: 2px;
+.category-card--feature .category-card__art {
+  height: clamp(170px, 20vw, 230px);
 }
 
-.category-card__media {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  flex: 1 1 auto;
-  min-height: 140px;
-  background: var(--white);
+.category-card--compact .category-card__art {
+  height: clamp(120px, 14vw, 160px);
 }
 
-.category-card__media img {
+.category-card__glyph {
+  display: block;
   width: 100%;
   height: 100%;
-  max-height: 160px;
-  object-fit: contain;
+}
+
+.category-card__glyph .product-visual {
+  width: 100%;
+  height: 100%;
+}
+
+.category-card .product-visual__label,
+.category-card .product-visual__mark,
+.category-card .product-visual__note {
+  display: none;
+}
+
+.category-card .product-visual__glyph {
+  width: min(40%, 122px);
+}
+
+.category-card .product-visual__halo {
+  width: min(52%, 164px);
 }
 
 .category-card__content {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: clamp(1.25rem, 3vw, 2rem);
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-4) var(--space-4);
+}
+
+.category-card__meta {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  font-weight: var(--weight-body-strong);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 
 .category-card__title {
-  font-size: clamp(1rem, 1.8vw, 1.25rem);
-  font-weight: 600;
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-body);
   margin: 0;
-  color: var(--ink-900);
+  color: var(--ink-950);
+  font-size: 1.1875rem;
+  font-weight: var(--weight-display);
+  line-height: 1.2;
+  letter-spacing: -0.018em;
 }
 
 .category-card__subtitle {
-  font-size: 0.875rem;
-  line-height: var(--leading-snug);
-  margin: 0;
-  color: var(--ink-600);
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  text-wrap: pretty;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
-.category-card__link {
+.category-card__cta {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: 0.875rem;
-  color: var(--brand-700);
-  margin-top: var(--space-1);
+  min-height: 32px;
+  margin-top: auto;
+  padding-top: var(--space-3);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: var(--weight-body-strong);
+  line-height: 1;
 }
 
-.category-card:hover .category-card__link svg,
-.category-card:focus-visible .category-card__link svg {
-  transform: translateX(2px);
+.category-card__cta svg {
+  transition: transform var(--t-base) var(--ease-out);
 }
 
-.category-card__link svg {
-  transition: transform var(--t-fast);
+.category-card:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .category-card:hover {
+    border-color: var(--brand-200);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  .category-card:hover .category-card__cta svg {
+    transform: translateX(3px);
+  }
+}
+
+@media (max-width: 640px) {
+  /* On a phone the mosaic becomes a compact index: a square specimen
+     beside the label, instead of five tall stacked plates. */
+  .category-card {
+    flex-direction: row;
+  }
+
+  .category-card__art,
+  .category-card--feature .category-card__art,
+  .category-card--compact .category-card__art {
+    flex: 0 0 108px;
+    width: 108px;
+    height: auto;
+    min-height: 132px;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 0;
+  }
+
+  .category-card__content {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .category-card__cta {
+    min-height: 28px;
+    padding-top: var(--space-2);
+  }
+
+  .category-card .product-visual__glyph {
+    width: min(48%, 104px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card,
+  .category-card__cta svg {
+    transition: none;
+  }
+
+  .category-card:hover {
+    transform: none;
+  }
+
+  .category-card:hover .category-card__cta svg {
+    transform: none;
+  }
 }

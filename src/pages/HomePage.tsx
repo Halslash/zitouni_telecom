@@ -11,69 +11,126 @@ import {
   getProductsInDiscoveryOrder,
 } from '../data/products';
 import { usePageTitle } from '../lib/usePageTitle';
-import { ChevronRightIcon } from '../components/Icons';
+import {
+  ChevronRightIcon,
+  CreditCardIcon,
+  ShieldCheckIcon,
+  TruckIcon,
+} from '../components/Icons';
 import './HomePage.css';
+
+const SERVICES = [
+  {
+    icon: TruckIcon,
+    title: 'Livraison',
+    copy: 'Dans les 58 wilayas, à domicile ou en point relais.',
+  },
+  {
+    icon: CreditCardIcon,
+    title: 'Paiement',
+    copy: 'À la livraison, après vérification du colis.',
+  },
+  {
+    icon: ShieldCheckIcon,
+    title: 'Garantie',
+    copy: 'Constructeur 24 mois et retour sous 7 jours.',
+  },
+];
 
 export default function HomePage() {
   usePageTitle();
-  const featuredProducts = getFeaturedProducts(6);
+  const featuredProducts = getFeaturedProducts(4);
   const discoveryProducts = getProductsInDiscoveryOrder();
   const orderedCategories = DISCOVERY_CATEGORY_ORDER.map((id) =>
-    categories.find((c) => c.id === id)
+    categories.find((category) => category.id === id)
   ).filter(Boolean) as typeof categories;
 
   return (
     <>
-      <div className="container">
-        <DeviceStrip
-          products={discoveryProducts}
-          label="Découvrir les produits"
-          context="home"
-        />
-      </div>
+      {/* The hero titles are slide-level headings; the page keeps one stable h1. */}
+      <h1 className="visually-hidden">
+        Zitouni Telecom — téléphonie, informatique et accessoires à Alger
+      </h1>
 
       <Carousel />
 
       <section
-        className="home-tile home-tile--light"
-        aria-labelledby="featured-title"
+        className="home-discovery"
+        aria-labelledby="discovery-title"
       >
         <div className="container">
-          <Reveal className="home-tile__head">
-            <h2 id="featured-title">La sélection</h2>
-          </Reveal>
-
-          <Reveal className="home-lineup" stagger>
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} variant="lineup" />
-            ))}
-          </Reveal>
-
-          <div className="home-tile__foot">
+          <Reveal className="home-section__head">
+            <div>
+              <p className="home-kicker">En vitrine</p>
+              <h2 id="discovery-title">À découvrir</h2>
+            </div>
             <Link to="/produits" className="text-link" viewTransition>
-              Voir tout
+              Tout le catalogue
               <ChevronRightIcon size={14} />
             </Link>
-          </div>
+          </Reveal>
+
+          <DeviceStrip
+            products={discoveryProducts}
+            label="Découvrir les produits"
+            context="home"
+          />
         </div>
       </section>
 
       <section
-        className="home-categories-band"
+        className="home-section home-featured"
+        aria-labelledby="featured-title"
+      >
+        <div className="container">
+          <Reveal className="home-section__head">
+            <div>
+              <p className="home-kicker">Sélection</p>
+              <h2 id="featured-title">Choisie pour vous</h2>
+              <p className="home-section__copy">
+                Une sélection courte, documentée avec les prix, les coloris et
+                les caractéristiques réelles de chaque produit.
+              </p>
+            </div>
+            <Link to="/produits" className="text-link" viewTransition>
+              Voir les produits
+              <ChevronRightIcon size={14} />
+            </Link>
+          </Reveal>
+
+          <Reveal className="home-featured__grid" stagger>
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      <section
+        className="home-section home-categories-band"
         aria-labelledby="categories-title"
       >
         <div className="container">
-          <Reveal className="home-tile__head">
-            <h2 id="categories-title">Catégories</h2>
-            <p>Tout l'univers tech, au même endroit.</p>
+          <Reveal className="home-section__head">
+            <div>
+              <p className="home-kicker">Rayons</p>
+              <h2 id="categories-title">Trouver votre prochain produit</h2>
+              <p className="home-section__copy">
+                Cinq univers, une même exigence de choix et de conseil.
+              </p>
+            </div>
+            <Link to="/produits" className="text-link" viewTransition>
+              Tous les produits
+              <ChevronRightIcon size={14} />
+            </Link>
           </Reveal>
 
-          <Reveal className="home-categories-grid">
+          <Reveal className="home-categories__grid" stagger>
             {orderedCategories.map((category) => (
               <CategoryCard
                 key={category.id}
                 category={category}
-                className={`home-categories-grid__item home-categories-grid__item--${category.id}`}
+                className={`home-categories__item home-categories__item--${category.id}`}
               />
             ))}
           </Reveal>
@@ -81,21 +138,43 @@ export default function HomePage() {
       </section>
 
       <section
-        className="home-tile home-tile--dark"
-        aria-labelledby="about-title"
+        className="home-services"
+        aria-labelledby="services-title"
       >
-        <div className="container">
-          <Reveal className="home-tile__head home-tile__head--light">
-            <h2 id="about-title">Zitouni Telecom</h2>
-            <p>Technologie, soin et fiabilité.</p>
-          </Reveal>
-
-          <div className="home-tile__foot">
-            <Link to="/aide" className="text-link text-link--light" viewTransition>
-              En savoir plus
+        <div className="container home-services__inner">
+          <Reveal className="home-services__intro">
+            <p className="home-kicker home-kicker--light">La boutique</p>
+            <h2 id="services-title">Commander en confiance</h2>
+            <p>
+              Des informations claires, un paiement à la réception et une
+              garantie constructeur sur chaque produit.
+            </p>
+            <Link
+              to="/aide"
+              className="text-link text-link--light"
+              viewTransition
+            >
+              Livraison, paiement et garantie
               <ChevronRightIcon size={14} />
             </Link>
-          </div>
+          </Reveal>
+
+          <Reveal className="home-services__list" stagger>
+            {SERVICES.map((service) => {
+              const ServiceIcon = service.icon;
+              return (
+                <div key={service.title} className="home-service">
+                  <span className="home-service__icon">
+                    <ServiceIcon size={20} strokeWidth={1.6} />
+                  </span>
+                  <span className="home-service__copy">
+                    <span className="home-service__title">{service.title}</span>
+                    <span className="home-service__text">{service.copy}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </Reveal>
         </div>
       </section>
     </>

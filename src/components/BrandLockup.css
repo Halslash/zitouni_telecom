@@ -1,40 +1,74 @@
+/* ============================================================
+   BRAND LOCKUP
+   The shop mark plus a compact wordmark. The mark carries the
+   colour; the type stays quiet and tight.
+   ============================================================ */
+
 .brand-lockup {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 0.625rem;
+  min-height: 44px;
   color: var(--ink-900);
   text-decoration: none;
-  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity var(--t-fast) var(--ease-out);
 }
 
 .brand-lockup__mark img {
   display: block;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(23 18 20 / 0.12);
 }
 
 .brand-lockup__type {
   display: flex;
   align-items: baseline;
-  gap: 0.375rem;
-  font-size: 0.9375rem;
-  letter-spacing: var(--tracking-body);
+  gap: 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: -0.016em;
+  white-space: nowrap;
 }
 
 .brand-lockup__name {
-  font-weight: 600;
+  color: var(--ink-950);
+  font-weight: var(--weight-body-strong);
 }
 
 .brand-lockup__descriptor {
-  font-weight: 400;
-  color: var(--ink-700);
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-body);
+}
+
+.brand-lockup:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .brand-lockup:hover {
+    opacity: 0.78;
+  }
 }
 
 .brand-lockup--inverse {
   color: var(--white);
 }
 
+.brand-lockup--inverse .brand-lockup__name {
+  color: var(--white);
+}
+
 .brand-lockup--inverse .brand-lockup__descriptor {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgb(255 255 255 / 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-lockup {
+    transition: none;
+  }
 }

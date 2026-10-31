@@ -338,6 +338,12 @@
     gap: var(--space-3);
   }
 
+  /* The field label is wider than a 320px phone; let it wrap instead of
+     pushing the whole account grid past the viewport. */
+  .wilaya-selector--field .wilaya-selector__label {
+    white-space: normal;
+  }
+
   .account-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

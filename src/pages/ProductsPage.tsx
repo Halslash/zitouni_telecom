@@ -367,7 +367,7 @@ export default function ProductsPage() {
           <div className="page-hero__meta">
             <span>
               <TruckIcon size={15} />
-              Livraison 24–72 h
+              Livraison 24–96 h
             </span>
             <span>
               <ShieldCheckIcon size={15} />
