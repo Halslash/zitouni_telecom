@@ -14,6 +14,7 @@ import AccountPage from './pages/AccountPage';
 import HelpPage from './pages/HelpPage';
 import NotFoundPage from './pages/NotFoundPage';
 import CategoryPage from './pages/CategoryPage';
+import LavaBackground from './components/LavaBackground';
 import { CATEGORY_PATHS } from './data/products';
 import { MotionProvider } from './lib/motion';
 import { CartProvider } from './context/CartContext';
@@ -27,6 +28,7 @@ function App() {
         <CartProvider>
           <WishlistProvider>
             <ErrorBoundary>
+              <LavaBackground />
               <Layout>
                 <Outlet />
               </Layout>

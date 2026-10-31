@@ -1,0 +1,197 @@
+:root {
+  --lava-base: #fcf2f5;
+  --lava-1: #f7d6e0;
+  --lava-2: #e8b4c8;
+  --lava-3: #d4a3c4;
+  --lava-4: #c9b3d6;
+  --lava-scroll: 0px;
+}
+
+.lava-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.lava-bg__base {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, var(--lava-base) 100%);
+}
+
+.lava-bg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(140% 140% at 50% 50%, transparent 60%, rgba(232, 180, 200, 0.08) 100%);
+}
+
+.lava-bg__breath {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 50% 10%, rgba(247, 214, 224, 0.12) 0%, transparent 70%);
+  animation: lava-breath 22s ease-in-out infinite alternate;
+}
+
+.lava-bg__blobs {
+  position: absolute;
+  inset: 0;
+}
+
+.lava-blob {
+  position: absolute;
+  width: 75vmax;
+  height: 75vmax;
+  border-radius: 50%;
+  filter: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.lava-blob--1 {
+  left: -20vmax;
+  top: -10vmax;
+  background: radial-gradient(circle, rgba(247, 214, 224, 0.72) 0%, transparent 70%);
+  animation: lava-drift-1 38s ease-in-out infinite alternate;
+  animation-delay: -8s;
+}
+
+.lava-blob--2 {
+  right: -25vmax;
+  top: -15vmax;
+  background: radial-gradient(circle, rgba(232, 180, 200, 0.68) 0%, transparent 72%);
+  animation: lava-drift-2 32s ease-in-out infinite alternate;
+  animation-delay: -12s;
+}
+
+.lava-blob--3 {
+  left: 10vmax;
+  bottom: -30vmax;
+  background: radial-gradient(circle, rgba(212, 163, 196, 0.65) 0%, transparent 74%);
+  animation: lava-drift-3 36s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+.lava-blob--4 {
+  right: -10vmax;
+  bottom: -25vmax;
+  background: radial-gradient(circle, rgba(201, 179, 214, 0.62) 0%, transparent 76%);
+  animation: lava-drift-4 40s ease-in-out infinite alternate;
+  animation-delay: -16s;
+}
+
+.lava-blob--5 {
+  left: -15vmax;
+  top: 20vmax;
+  background: radial-gradient(circle, rgba(247, 214, 224, 0.58) 0%, transparent 78%);
+  animation: lava-drift-5 34s ease-in-out infinite alternate;
+  animation-delay: -10s;
+}
+
+.lava-bg__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+}
+
+@keyframes lava-breath {
+  from {
+    opacity: 0.92;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lava-drift-1 {
+  0% {
+    transform: translate3d(calc(var(--lava-scroll) * 0.3), calc(var(--lava-scroll) * 0.2), 0) scale(0.9);
+  }
+  50% {
+    transform: translate3d(15vmax, 10vmax, 0) scale(1.15);
+  }
+  100% {
+    transform: translate3d(25vmax, 18vmax, 0) scale(1.05);
+  }
+}
+
+@keyframes lava-drift-2 {
+  0% {
+    transform: translate3d(calc(var(--lava-scroll) * -0.2), calc(var(--lava-scroll) * 0.25), 0) scale(0.95);
+  }
+  50% {
+    transform: translate3d(-12vmax, 12vmax, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-20vmax, 22vmax, 0) scale(1.0);
+  }
+}
+
+@keyframes lava-drift-3 {
+  0% {
+    transform: translate3d(calc(var(--lava-scroll) * 0.25), calc(var(--lava-scroll) * -0.2), 0) scale(0.88);
+  }
+  50% {
+    transform: translate3d(10vmax, -8vmax, 0) scale(1.18);
+  }
+  100% {
+    transform: translate3d(18vmax, -15vmax, 0) scale(1.08);
+  }
+}
+
+@keyframes lava-drift-4 {
+  0% {
+    transform: translate3d(calc(var(--lava-scroll) * -0.3), calc(var(--lava-scroll) * -0.15), 0) scale(0.92);
+  }
+  50% {
+    transform: translate3d(-15vmax, -12vmax, 0) scale(1.16);
+  }
+  100% {
+    transform: translate3d(-25vmax, -18vmax, 0) scale(1.04);
+  }
+}
+
+@keyframes lava-drift-5 {
+  0% {
+    transform: translate3d(calc(var(--lava-scroll) * 0.2), calc(var(--lava-scroll) * 0.3), 0) scale(0.9);
+  }
+  50% {
+    transform: translate3d(12vmax, 15vmax, 0) scale(1.14);
+  }
+  100% {
+    transform: translate3d(20vmax, 25vmax, 0) scale(1.06);
+  }
+}
+
+.lava-bg--paused .lava-blob,
+.lava-bg--paused .lava-bg__breath {
+  animation-play-state: paused;
+}
+
+.lava-bg--static .lava-blob,
+.lava-bg--static .lava-bg__breath {
+  animation: none;
+}
+
+@media (max-width: 720px) {
+  .lava-blob--4,
+  .lava-blob--5 {
+    display: none;
+  }
+  .lava-blob {
+    width: 90vmax;
+    height: 90vmax;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lava-blob,
+  .lava-bg__breath {
+    animation: none !important;
+  }
+}
