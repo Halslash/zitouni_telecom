@@ -1,0 +1,140 @@
+/* ============================================================
+   STAGE — the shared presentation of a device.
+   Radial spotlight, elliptical floor shadow, optional masked
+   floor reflection (desktop only) and a capped pointer tilt.
+   ============================================================ */
+
+.stage {
+  --stage-spot-strength: 1;
+  --stage-tilt-x: 0deg;
+  --stage-tilt-y: 0deg;
+
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+/* Spotlight: one soft radial light directly behind the device. */
+.stage__spot {
+  position: absolute;
+  /* Kept inside the stage horizontally so a hero stage at the page edge
+     can never widen the document. */
+  inset: -22% 0;
+  pointer-events: none;
+  background: radial-gradient(
+    52% 44% at 50% 42%,
+    rgb(255 255 255 / calc(0.5 * var(--stage-spot-strength))),
+    rgb(255 244 247 / calc(0.28 * var(--stage-spot-strength))) 46%,
+    transparent 78%
+  );
+}
+
+.stage__device {
+  position: relative;
+  z-index: 1;
+  transform: perspective(1200px) rotateX(var(--stage-tilt-x))
+    rotateY(var(--stage-tilt-y));
+  transition: transform 480ms var(--ease-out);
+  will-change: transform;
+}
+
+/* Floor shadow: a soft ellipse under the device. */
+.stage__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: calc(-1 * min(4%, 28px));
+  width: 62%;
+  height: min(9%, 44px);
+  transform: translateX(-50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgb(23 18 20 / 0.22),
+    rgb(23 18 20 / 0.08) 55%,
+    transparent 78%
+  );
+  filter: blur(6px);
+}
+
+/* Floor reflection: a flipped copy masked into the floor at ~10%.
+   The copy is presentational only — no pointer events, no selection. */
+.stage__reflection {
+  position: absolute;
+  z-index: 0;
+  top: 100%;
+  left: 0;
+  right: 0;
+  opacity: 0.1;
+  transform: scaleY(-1);
+  transform-origin: top;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.9) 40%,
+    transparent 92%
+  );
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.9) 40%, transparent 92%);
+}
+
+/* Reflection is a desktop-only affordance. */
+@media (max-width: 1023px) {
+  .stage__reflection {
+    display: none;
+  }
+}
+
+/* Pointer sheen: one soft highlight that follows the cursor across glass.
+   Desktop only, and it fades out when the pointer leaves. */
+.stage__sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: var(--sheen-opacity, 0);
+  background: radial-gradient(
+    circle at var(--sheen-x, 50%) var(--sheen-y, 40%),
+    rgb(255 255 255 / 0.3),
+    rgb(255 255 255 / 0.08) 34%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+  transition: opacity 320ms var(--ease-out);
+}
+
+@media (max-width: 1023px) {
+  .stage__sheen {
+    display: none;
+  }
+}
+
+/* Progressive degradation, in the documented order. */
+[data-perf='1'] .stage__reflection {
+  display: none;
+}
+
+[data-perf='2'] .stage__sheen {
+  display: none;
+}
+
+[data-perf='3'] .stage__device {
+  transform: none !important;
+  transition: none;
+}
+
+[data-perf='4'] .home-hotspot__line {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage__device {
+    transform: none;
+    transition: none;
+  }
+
+  .stage__reflection,
+  .stage__sheen {
+    display: none;
+  }
+}

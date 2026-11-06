@@ -18,6 +18,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import ProductCard from '../components/ProductCard';
 import {
   ArrowRightIcon,
@@ -361,7 +362,7 @@ export default function ProductsPage() {
           <span className="eyebrow">
             {routeCategory ? 'Collection' : 'Catalogue'}
           </span>
-          <h1 className="page-hero__title">{heading}</h1>
+          <LineReveal as="h1" className="page-hero__title" immediate lines={[heading]} />
           <p className="page-hero__desc">{description}</p>
 
           <div className="page-hero__meta">

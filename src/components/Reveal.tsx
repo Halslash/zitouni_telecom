@@ -48,7 +48,7 @@ export default function Reveal({
   id,
   stagger = false,
   delay = 0,
-  distance = 26,
+  distance = 22,
   threshold = 0.08,
 }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null);

@@ -1,0 +1,37 @@
+/* ============================================================
+   LINE REVEAL
+   Headlines rise out of a clipped line box. Same easing and
+   duration as the shared reveal, 90 ms between lines, once.
+   ============================================================ */
+
+.line-reveal {
+  display: flex;
+  flex-direction: column;
+}
+
+.line-reveal__mask {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders without changing the optical line box. */
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+
+.line-reveal__inner {
+  display: block;
+  transform: translate3d(0, 112%, 0);
+  transition: transform 820ms var(--ease-out);
+  transition-delay: calc(var(--line-index, 0) * 90ms);
+  will-change: transform;
+}
+
+.line-reveal.is-revealed .line-reveal__inner {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line-reveal__inner {
+    transform: none;
+    transition: none;
+  }
+}

@@ -87,6 +87,11 @@ export default function Footer() {
           </p>
         </div>
       </div>
+
+      {/* Oversized wordmark, deliberately cropped by the footer edge. */}
+      <div className="site-footer__wordmark" aria-hidden="true">
+        Zitouni
+      </div>
     </footer>
   );
 }

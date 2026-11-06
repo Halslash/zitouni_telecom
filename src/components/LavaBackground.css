@@ -22,17 +22,32 @@
   background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, var(--lava-base) 100%);
 }
 
+/* WebGL field: rendered small, upscaled by CSS (it is soft). */
+.lava-bg__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out, ease-out);
+}
+
+.lava-bg.is-live .lava-bg__canvas {
+  opacity: 1;
+}
+
+.lava-bg:not([data-mode='webgl']) .lava-bg__canvas {
+  display: none;
+}
+
+.lava-bg[data-mode='webgl'] .lava-bg__blobs {
+  display: none;
+}
+
 .lava-bg__vignette {
   position: absolute;
   inset: 0;
   background: radial-gradient(140% 140% at 50% 50%, transparent 60%, rgba(232, 180, 200, 0.08) 100%);
-}
-
-.lava-bg__breath {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 120% at 50% 10%, rgba(247, 214, 224, 0.12) 0%, transparent 70%);
-  animation: lava-breath 22s ease-in-out infinite alternate;
 }
 
 .lava-bg__blobs {
@@ -99,15 +114,6 @@
   mix-blend-mode: multiply;
 }
 
-@keyframes lava-breath {
-  from {
-    opacity: 0.92;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes lava-drift-1 {
   0% {
     transform: translate3d(calc(var(--lava-scroll) * 0.3), calc(var(--lava-scroll) * 0.2), 0) scale(0.9);
@@ -168,13 +174,11 @@
   }
 }
 
-.lava-bg--paused .lava-blob,
-.lava-bg--paused .lava-bg__breath {
+.lava-bg--paused .lava-blob {
   animation-play-state: paused;
 }
 
-.lava-bg--static .lava-blob,
-.lava-bg--static .lava-bg__breath {
+.lava-bg--static .lava-blob {
   animation: none;
 }
 
@@ -190,8 +194,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lava-blob,
-  .lava-bg__breath {
+  .lava-blob {
     animation: none !important;
   }
 }

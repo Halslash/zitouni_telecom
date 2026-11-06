@@ -33,6 +33,7 @@ function StripItem({ product, index }: { product: Product; index: number }) {
       className="device-strip__item"
       style={staggerStyle(index)}
       viewTransition
+      data-morph-source
     >
       <span className="device-strip__thumb">
         <ProductImage

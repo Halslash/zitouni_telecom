@@ -1,4 +1,5 @@
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import { WilayaSelector } from '../components/WilayaSelector';
 import { useWilaya } from '../context/WilayaContext';
 import {
@@ -125,7 +126,7 @@ export default function HelpPage() {
           </nav>
 
           <span className="eyebrow">Aide &amp; services</span>
-          <h1 className="page-hero__title">Acheter en toute confiance</h1>
+          <LineReveal as="h1" className="page-hero__title" immediate lines={['Acheter en toute confiance']} />
           <p className="page-hero__desc">
             Livraison, paiement, garantie et retours : voici comment nous
             travaillons, sans petites lignes ni promesses floues.

@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { AnimatePresence, m } from 'motion/react';
+import { useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import ProductImage from '../components/ProductImage';
 import QuantityStepper from '../components/QuantityStepper';
 import { useCart } from '../context/CartContext';
 import { getVariantPrice } from '../data/products';
-import { formatPrice } from '../lib/format';
+import { formatItemCount, formatPrice } from '../lib/format';
 import { usePageTitle } from '../lib/usePageTitle';
 import {
   ArrowRightIcon,
@@ -18,26 +21,33 @@ import './CartPage.css';
 export default function CartPage() {
   usePageTitle('Panier');
   const { state, remove, updateQuantity } = useCart();
+  const reduceMotion = useShouldReduceMotion();
   const [notice, setNotice] = useState(false);
 
   const count = state.items.reduce((sum, item) => sum + item.quantity, 0);
 
   if (state.items.length === 0) {
     return (
-      <section className="cart-page">
+      <section className="cart-page cart-page--empty">
         <div className="container cart-page__empty">
-          <span className="empty-state__icon">
-            <ShoppingBagIcon size={26} />
-          </span>
-          <h1>Votre panier est vide</h1>
-          <p>
-            Parcourez la sélection et ajoutez un produit pour préparer votre
-            commande.
-          </p>
-          <Link to="/produits" className="btn btn--primary">
-            Explorer la boutique
-            <ChevronRightIcon size={15} />
-          </Link>
+          <div className="cart-empty">
+            <span className="cart-empty__icon">
+              <ShoppingBagIcon size={30} strokeWidth={1.4} />
+            </span>
+            <LineReveal
+              as="h1"
+              immediate
+              lines={['Votre panier est vide']}
+            />
+            <p>
+              Parcourez la sélection et ajoutez un produit pour préparer votre
+              commande.
+            </p>
+            <Link to="/produits" className="btn btn--primary">
+              Explorer la boutique
+              <ChevronRightIcon size={15} />
+            </Link>
+          </div>
         </div>
       </section>
     );
@@ -46,11 +56,8 @@ export default function CartPage() {
   return (
     <section className="cart-page">
       <div className="container cart-page__header">
-        <p className="cart-page__kicker">Commande</p>
-        <h1>Panier</h1>
-        <p className="cart-page__count">
-          {count} article{count > 1 ? 's' : ''}
-        </p>
+        <LineReveal as="h1" immediate lines={['Panier']} />
+        <p className="cart-page__count">{formatItemCount(count)}</p>
       </div>
 
       <div className="container cart-page__grid">
@@ -144,10 +151,20 @@ export default function CartPage() {
           <div className="cart-summary">
             <h2>Résumé</h2>
 
-            <div className="cart-summary__row">
+            <div className="cart-summary__row cart-summary__row--total">
               <span>Sous-total</span>
               <span className="cart-summary__amount">
-                {formatPrice(state.total)}
+                <AnimatePresence mode="wait" initial={false}>
+                  <m.span
+                    key={state.total}
+                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {formatPrice(state.total)}
+                  </m.span>
+                </AnimatePresence>
               </span>
             </div>
             <div className="cart-summary__row cart-summary__row--muted">
@@ -156,7 +173,7 @@ export default function CartPage() {
             </div>
 
             <p className="cart-summary__detail">
-              {count} article{count > 1 ? 's' : ''} · paiement à la livraison
+              {formatItemCount(count)} · paiement à la livraison
             </p>
 
             <button

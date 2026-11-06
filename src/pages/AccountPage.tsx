@@ -1,4 +1,5 @@
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import { WilayaSelector } from '../components/WilayaSelector';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -62,7 +63,7 @@ export default function AccountPage() {
           </nav>
 
           <span className="eyebrow">Espace client</span>
-          <h1 className="page-hero__title">Mon compte</h1>
+          <LineReveal as="h1" className="page-hero__title" immediate lines={['Mon compte']} />
           <p className="page-hero__desc">
             Vos favoris, votre panier et votre wilaya de livraison restent
             accessibles sans inscription. Les comptes clients arriveront avec la

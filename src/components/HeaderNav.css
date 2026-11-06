@@ -62,19 +62,20 @@
   font-weight: var(--weight-body-strong);
 }
 
-.primary-nav__link.is-flyout-active {
-  color: var(--color-primary);
-}
-
-.primary-nav__link.is-flyout-active::after {
-  content: '';
+/* Single sliding indicator gliding between items, transform only. */
+.primary-nav__indicator {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  bottom: 6px;
+  left: 50%;
+  width: 32px;
   height: 2px;
-  border-radius: 2px 2px 0 0;
-  background: currentColor;
+  border-radius: 2px;
+  background: var(--color-primary);
+  opacity: var(--indicator-opacity, 0);
+  transform: translate(-50%, 0);
+  transition:
+    transform 420ms var(--ease-spring),
+    opacity 200ms var(--ease-out);
 }
 
 @media (prefers-reduced-motion: reduce) {

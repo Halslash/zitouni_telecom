@@ -7,6 +7,7 @@ import {
 import type { Category } from '../data/products';
 import { formatPrice } from '../lib/format';
 import ProductImage from './ProductImage';
+import Stage from './Stage';
 import { ChevronRightIcon } from './Icons';
 import './NavFlyout.css';
 
@@ -122,6 +123,8 @@ export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
 
   const products = getProductsByCategory(displayCategory);
   const categoryPath = CATEGORY_PATHS[displayCategory];
+  const previewProduct =
+    products.find((product) => product.featured) ?? products[0];
   const isOpen = state === 'opening' || state === 'open' || state === 'switching';
   const isHidden = state === 'closed' || state === 'closing';
 
@@ -144,7 +147,11 @@ export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
       >
         <div className="nav-flyout__inner">
           <div
-            className={`nav-flyout__grid${state === 'switching' ? ' is-leaving' : ''}`}
+            className={`nav-flyout__grid${
+              previewProduct ? '' : ' nav-flyout__grid--no-preview'
+            }${
+              state === 'switching' ? ' is-leaving' : ''
+            }`}
             key={`${displayCategory}-${contentKey}`}
           >
             <div className="nav-flyout__col" style={{ animationDelay: '0ms' }}>
@@ -220,6 +227,33 @@ export default function NavFlyout({ activeCategory, onOpen }: NavFlyoutProps) {
                 Panier
               </Link>
             </div>
+            {previewProduct && (
+              <div className="nav-flyout__col" style={{ animationDelay: '90ms' }}>
+                <Link
+                  to={`/produit/${previewProduct.id}`}
+                  className="nav-flyout__preview-card"
+                  viewTransition
+                  data-morph-source
+                  onClick={() => onOpen(null)}
+                >
+                  <Stage className="nav-flyout__preview-stage" reflect>
+                    <ProductImage
+                      src={previewProduct.image}
+                      alt=""
+                      category={previewProduct.category}
+                      view={1}
+                      variant="bare"
+                    />
+                  </Stage>
+                  <span className="nav-flyout__preview-name">
+                    {previewProduct.name}
+                  </span>
+                  <span className="nav-flyout__preview-price">
+                    {formatPrice(previewProduct.price)}
+                  </span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

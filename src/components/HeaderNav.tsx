@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { NavLink } from './AppLink';
 import { CATEGORY_PATHS, categories } from '../data/products';
 import type { Category } from '../data/products';
@@ -9,7 +10,47 @@ export default function HeaderNav() {
   const [activeFlyout, setActiveFlyout] = useState<Category | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const indicatorRef = useRef<HTMLSpanElement>(null);
   const closeTimer = useRef<number | null>(null);
+  const location = useLocation();
+
+  /* Sliding active indicator: one element gliding between items,
+     transform only. */
+  const placeIndicator = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    const indicator = indicatorRef.current;
+    if (!wrapper || !indicator) return;
+    const wrapRect = wrapper.getBoundingClientRect();
+    const target = Object.entries(CATEGORY_PATHS).find(([, path]) =>
+      location.pathname.startsWith(path)
+    );
+    const trigger = target ? triggerRefs.current[target[0]] : null;
+    if (!trigger) {
+      indicator.style.setProperty('--indicator-opacity', '0');
+      return;
+    }
+    const rect = trigger.getBoundingClientRect();
+    const x = rect.left - wrapRect.left + rect.width / 2;
+    indicator.style.setProperty(
+      'transform',
+      `translate(-50%, 0) translateX(${x.toFixed(1)}px)`
+    );
+    indicator.style.setProperty('--indicator-opacity', '1');
+  }, [location.pathname]);
+
+  useLayoutEffect(() => {
+    placeIndicator();
+  }, [placeIndicator, activeFlyout]);
+
+  useEffect(() => {
+    const onResize = () => placeIndicator();
+    window.addEventListener('resize', onResize, { passive: true });
+    const fontReady = document.fonts?.ready.then(() => placeIndicator());
+    return () => {
+      window.removeEventListener('resize', onResize);
+      fontReady?.catch(() => {});
+    };
+  }, [placeIndicator]);
 
   const clearClose = () => {
     if (closeTimer.current) {
@@ -90,6 +131,7 @@ export default function HeaderNav() {
             </li>
           ))}
         </ul>
+        <span ref={indicatorRef} className="primary-nav__indicator" aria-hidden="true" />
       </nav>
       <NavFlyout
         activeCategory={activeFlyout}

@@ -46,6 +46,7 @@ export default function ProductCard({
           className="product-card__media-link"
           aria-label={product.name}
           viewTransition
+          data-morph-source
         >
           <ProductImage
             src={product.image}

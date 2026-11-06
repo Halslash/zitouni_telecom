@@ -1,4 +1,5 @@
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import Carousel from '../components/Carousel';
 import ProductImage from '../components/ProductImage';
 import { getCategoryBySlug, getProductsByCategory } from '../data/products';
@@ -22,7 +23,7 @@ export default function CategoryPage() {
     <main className="category-page">
       <div className="container">
         <header className="category-page__header">
-          <h1 className="category-page__title">{category.name}</h1>
+          <LineReveal as="h1" className="category-page__title" immediate lines={[category.name]} />
         </header>
 
         <section className="category-strip-page" aria-label="Produits de la catégorie">

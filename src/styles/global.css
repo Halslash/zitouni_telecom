@@ -11,7 +11,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  scroll-padding-top: calc(var(--header-h) + 3.5rem);
+  color-scheme: light;
 }
 
 /* Anchors and focused controls keep clear of the sticky header. */
@@ -59,10 +60,13 @@ h5 {
 
 h1 {
   letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
 }
 
 p {
   margin: 0;
+  max-width: 60ch;
+  text-wrap: pretty;
 }
 
 ul,
@@ -115,19 +119,23 @@ legend {
 }
 
 ::selection {
-  background: var(--brand-200);
-  color: var(--brand-950);
+  background: var(--lava-1);
+  color: var(--brand-900);
 }
 
+/* One focus ring everywhere: 2px wine outside a 2px white inner ring,
+   legible on glass, lava and dark tiles alike. */
 :focus-visible {
   outline: 2px solid var(--color-focus);
-  outline-offset: 3px;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fff;
+  border-radius: 4px;
 }
 
-/* Deep bands invert the focus colour so rings stay visible on near-black. */
 .on-dark :focus-visible,
 .section--wine :focus-visible {
   outline-color: var(--color-focus-inverse);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.9);
 }
 
 :focus:not(:focus-visible) {
@@ -142,7 +150,7 @@ legend {
    ============================================================ */
 
 .reveal {
-  --reveal-travel: var(--reveal-distance, 24px);
+  --reveal-travel: var(--reveal-distance, 22px);
   opacity: 0;
   transform: translate3d(0, var(--reveal-travel), 0);
   transition:
@@ -156,7 +164,7 @@ legend {
 }
 
 .reveal-stagger {
-  --reveal-child-travel: calc(var(--reveal-distance, 24px) * 0.7);
+  --reveal-child-travel: calc(var(--reveal-distance, 22px) * 0.7);
   opacity: 1;
   transform: none;
   transition: none;
@@ -305,6 +313,31 @@ legend {
     to {
       opacity: 1;
     }
+  }
+
+  /* Product image morph: the clicked card's visual becomes its own snapshot,
+     so the page group must not flatten the subtree. */
+  html.is-morphing main#main,
+  html.is-morphing .site-header {
+    view-transition-name: none;
+  }
+
+  html.is-morphing .product-page__media-frame {
+    view-transition-name: product-morph;
+  }
+
+  ::view-transition-group(product-morph) {
+    animation-duration: 0.52s;
+    animation-timing-function: var(--ease-out);
+  }
+
+  ::view-transition-old(product-morph) {
+    animation: none;
+    opacity: 0;
+  }
+
+  ::view-transition-new(product-morph) {
+    animation: none;
   }
 }
 
@@ -516,7 +549,7 @@ legend {
 }
 
 .text-link:hover svg {
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 .text-link--light {
@@ -661,7 +694,7 @@ legend {
   padding: 0.75rem 1.25rem;
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-pill);
   color: var(--btn-fg);
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -681,7 +714,8 @@ legend {
 }
 
 .btn:active {
-  transform: scale(0.985);
+  transform: translate(var(--magnet-x, 0px), var(--magnet-y, 0px))
+    scale(0.98);
 }
 
 .btn:disabled,
@@ -697,6 +731,14 @@ legend {
 .btn--primary {
   --btn-bg: var(--brand-700);
   --btn-bg-hover: var(--brand-800);
+  transform: translate(var(--magnet-x, 0px), var(--magnet-y, 0px));
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.09),
+    transparent 58%,
+    rgb(0 0 0 / 0.05)
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
 }
 
 .btn--accent {
@@ -704,15 +746,20 @@ legend {
   --btn-bg-hover: var(--brand-800);
 }
 
+/* Secondary: glass pill with a hairline. */
 .btn--outline {
-  --btn-bg: transparent;
+  --btn-bg: var(--glass-bg-1);
   --btn-fg: var(--color-text);
-  --btn-border: var(--color-border-strong);
+  --btn-border: var(--glass-border-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur))
+    saturate(var(--glass-saturate));
+  box-shadow: var(--shadow-glass-1);
 }
 
 .btn--outline:hover {
-  --btn-bg: var(--color-surface);
-  border-color: var(--ink-400);
+  --btn-bg: var(--glass-bg-2);
+  border-color: var(--glass-border-strong);
 }
 
 .btn--ghost {
@@ -1200,8 +1247,13 @@ legend {
   position: relative;
   overflow: hidden;
   padding-block: clamp(2.25rem, 4.5vw, 4rem) clamp(1.75rem, 3.5vw, 3rem);
-  background: var(--color-surface-2);
-  border-bottom: 1px solid var(--color-border);
+  /* Headings sit on the lava behind a soft white scrim, not in a box. */
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.74),
+    rgb(255 255 255 / 0.38) 62%,
+    transparent
+  );
 }
 
 .page-hero__top {
@@ -1364,4 +1416,23 @@ textarea {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 160, 180, 0.6) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(200, 160, 180, 0.6);
+  border-radius: 999px;
 }

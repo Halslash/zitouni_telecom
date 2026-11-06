@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Link } from '../components/AppLink';
+import CartToast from '../components/CartToast';
+import LineReveal from '../components/LineReveal';
 import ProductCard from '../components/ProductCard';
 import ProductImage from '../components/ProductImage';
 import QuantityStepper from '../components/QuantityStepper';
-import Reveal from '../components/Reveal';
+import Stage from '../components/Stage';
 import { useCart } from '../context/CartContext';
 import {
   CATEGORY_PATHS,
@@ -15,8 +17,10 @@ import {
 } from '../data/products';
 import { formatPrice } from '../lib/format';
 import { usePageTitle } from '../lib/usePageTitle';
+import { useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import {
   CheckIcon,
+  ChevronDownIcon,
   ChevronRightIcon,
   CreditCardIcon,
   InfoIcon,
@@ -25,10 +29,13 @@ import {
 } from '../components/Icons';
 import './ProductDetailPage.css';
 
+const FLIGHT_MS = 600;
+const CONFIRM_MS = 1200;
+
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { add } = useCart();
+  const reduceMotion = useShouldReduceMotion();
   const product = id ? getProductById(id) : undefined;
 
   usePageTitle(product?.name);
@@ -40,12 +47,77 @@ export default function ProductDetailPage() {
     product?.colors?.[0]?.name
   );
   const [quantity, setQuantity] = useState(1);
+  const [specsOpen, setSpecsOpen] = useState(true);
+  const [added, setAdded] = useState(false);
+  const [toast, setToast] = useState<{ name: string; id: number } | null>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const addedTimer = useRef(0);
 
   useEffect(() => {
     setVariantName(product?.variants?.[0]?.name);
     setColorName(product?.colors?.[0]?.name);
     setQuantity(1);
+    setAdded(false);
   }, [product]);
+
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
+
+  const closeToast = useCallback(() => setToast(null), []);
+
+  const flyToCart = useCallback(() => {
+    if (reduceMotion) return;
+    const source =
+      mediaRef.current?.querySelector<HTMLElement>('.product-visual');
+    const target = document.querySelector<HTMLElement>(
+      '.header-icon-btn--cart'
+    );
+    if (!source || !target) return;
+
+    const from = source.getBoundingClientRect();
+    const to = target.getBoundingClientRect();
+    if (from.width === 0 || to.width === 0) return;
+
+    const clone = source.cloneNode(true) as HTMLElement;
+    clone.classList.add('product-fly');
+    Object.assign(clone.style, {
+      position: 'fixed',
+      left: `${from.left}px`,
+      top: `${from.top}px`,
+      width: `${from.width}px`,
+      height: `${from.height}px`,
+      margin: '0',
+      zIndex: '90',
+      pointerEvents: 'none',
+    });
+    document.body.appendChild(clone);
+
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const arcLift = Math.max(70, Math.abs(dx) * 0.22);
+
+    const animation = clone.animate(
+      [
+        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+        {
+          transform: `translate(${dx * 0.55}px, ${dy * 0.55 - arcLift}px) scale(0.6)`,
+          opacity: 0.92,
+          offset: 0.58,
+        },
+        {
+          transform: `translate(${dx}px, ${dy}px) scale(0.12)`,
+          opacity: 0,
+        },
+      ],
+      {
+        duration: FLIGHT_MS,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        fill: 'forwards',
+      }
+    );
+    const cleanup = () => clone.remove();
+    animation.onfinish = cleanup;
+    animation.oncancel = cleanup;
+  }, [reduceMotion]);
 
   if (!product) {
     return (
@@ -73,19 +145,27 @@ export default function ProductDetailPage() {
 
   const category = getCategoryById(product.category);
   const unitPrice = getVariantPrice(product, variantName);
-  const related = getRelatedProducts(product, 3);
+  const related = getRelatedProducts(product, 4);
   const variants = product.variants ?? [];
   const colors = product.colors ?? [];
+  const highlights = product.highlights ?? [];
 
   const handleAdd = () => {
     add(product, quantity, { variant: variantName, color: colorName });
-    navigate('/panier');
+    flyToCart();
+    setAdded(true);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setAdded(false), CONFIRM_MS);
+    setToast({ name: product.name, id: Date.now() });
   };
 
   return (
     <article className="product-page">
       <div className="container product-page__breadcrumb-wrap">
-        <nav className="breadcrumb product-page__breadcrumb" aria-label="Fil d’Ariane">
+        <nav
+          className="breadcrumb product-page__breadcrumb"
+          aria-label="Fil d’Ariane"
+        >
           <Link to="/produits">Boutique</Link>
           <ChevronRightIcon size={13} className="breadcrumb__sep" />
           {category && (
@@ -100,26 +180,36 @@ export default function ProductDetailPage() {
 
       <section className="product-page__hero">
         <div className="container product-page__hero-grid">
-          <Reveal className="product-page__gallery">
+          <div className="product-page__gallery" ref={mediaRef}>
             <div className="product-page__media-frame">
-              <ProductImage
-                src={product.image}
-                alt={product.name}
-                category={product.category}
-                view={1}
-                showNote
-                priority
-              />
+              <Stage reflect tilt sheen className="product-page__stage">
+                <ProductImage
+                  src={product.image}
+                  alt={product.name}
+                  category={product.category}
+                  view={1}
+                  variant="bare"
+                  priority
+                />
+              </Stage>
             </div>
-          </Reveal>
+            <p className="product-page__media-note">
+              Visuel de démonstration
+            </p>
+          </div>
 
-          <Reveal className="product-page__details">
+          <div className="product-page__details">
             <header className="product-page__title-group">
               <p className="product-page__eyebrow">
                 {product.brand}
                 {category ? ` · ${category.name}` : ''}
               </p>
-              <h1 className="product-page__title">{product.name}</h1>
+              <LineReveal
+                as="h1"
+                className="product-page__title"
+                immediate
+                lines={[product.name]}
+              />
               {product.tagline && (
                 <p className="product-page__tagline">{product.tagline}</p>
               )}
@@ -132,38 +222,10 @@ export default function ProductDetailPage() {
               </span>
             </div>
 
-            {variants.length > 0 && (
-              <fieldset className="product-option">
-                <legend className="product-option__legend">
-                  Configuration
-                </legend>
-                <div className="product-option__list">
-                  {variants.map((variant) => (
-                    <label
-                      key={variant.name}
-                      className={`product-option__choice${
-                        variantName === variant.name ? ' is-selected' : ''
-                      }`}
-                    >
-                      <input
-                        className="product-option__input"
-                        type="radio"
-                        name={`variant-${product.id}`}
-                        value={variant.name}
-                        checked={variantName === variant.name}
-                        onChange={() => setVariantName(variant.name)}
-                      />
-                      <span className="product-option__name">
-                        {variant.name}
-                      </span>
-                      <span className="product-option__price">
-                        {formatPrice(variant.price)}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            )}
+            <p className="product-page__availability">
+              <span className="product-page__availability-dot" aria-hidden="true" />
+              Commande en ligne bientôt disponible
+            </p>
 
             {colors.length > 0 && (
               <div className="product-option">
@@ -198,6 +260,39 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+            {variants.length > 0 && (
+              <fieldset className="product-option">
+                <legend className="product-option__legend">
+                  Configuration
+                </legend>
+                <div className="product-option__list">
+                  {variants.map((variant) => (
+                    <label
+                      key={variant.name}
+                      className={`product-option__choice${
+                        variantName === variant.name ? ' is-selected' : ''
+                      }`}
+                    >
+                      <input
+                        className="product-option__input"
+                        type="radio"
+                        name={`variant-${product.id}`}
+                        value={variant.name}
+                        checked={variantName === variant.name}
+                        onChange={() => setVariantName(variant.name)}
+                      />
+                      <span className="product-option__name">
+                        {variant.name}
+                      </span>
+                      <span className="product-option__price">
+                        {formatPrice(variant.price)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+
             <div className="product-page__purchase">
               <QuantityStepper
                 value={quantity}
@@ -208,53 +303,70 @@ export default function ProductDetailPage() {
               />
               <button
                 type="button"
-                className="btn btn--primary product-page__cta"
+                className={`btn btn--primary product-page__cta${
+                  added ? ' is-added' : ''
+                }`}
                 onClick={handleAdd}
+                aria-live="polite"
               >
-                Ajouter au panier
+                {added ? (
+                  <>
+                    <CheckIcon size={16} strokeWidth={2.4} />
+                    Ajouté
+                  </>
+                ) : (
+                  'Ajouter au panier'
+                )}
               </button>
             </div>
 
             <ul className="product-page__assurances">
               <li>
-                <TruckIcon size={17} />
+                <TruckIcon size={18} strokeWidth={1.5} />
                 <span>
                   <strong>Livraison 58 wilayas</strong>
                   24 à 96 h selon la zone
                 </span>
               </li>
               <li>
-                <CreditCardIcon size={17} />
+                <CreditCardIcon size={18} strokeWidth={1.5} />
                 <span>
                   <strong>Paiement à la livraison</strong>
                   Après vérification du colis
                 </span>
               </li>
               <li>
-                <ShieldCheckIcon size={17} />
+                <ShieldCheckIcon size={18} strokeWidth={1.5} />
                 <span>
                   <strong>Garantie 24 mois</strong>
                   Retour sous 7 jours
                 </span>
               </li>
             </ul>
-
-            {product.highlights && product.highlights.length > 0 && (
-              <div className="product-page__highlights">
-                <h2 className="product-page__section-label">Points clés</h2>
-                <ul>
-                  {product.highlights.map((highlight) => (
-                    <li key={highlight}>
-                      <CheckIcon size={14} strokeWidth={2.2} />
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </Reveal>
+          </div>
         </div>
       </section>
+
+      {highlights.length > 0 && (
+        <section
+          className="product-page__bands"
+          aria-label="Points clés du produit"
+        >
+          {highlights.map((highlight, index) => (
+            <div
+              key={highlight}
+              className={`product-band${index % 2 === 1 ? ' product-band--alt' : ''}`}
+            >
+              <div className="container product-band__inner">
+                <span className="product-band__index" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <p className="product-band__text">{highlight}</p>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
 
       {product.specs && Object.keys(product.specs).length > 0 && (
         <section
@@ -262,20 +374,35 @@ export default function ProductDetailPage() {
           aria-labelledby="specs-title"
         >
           <div className="product-page__section-head">
-            <p className="product-page__section-kicker">Fiche produit</p>
             <h2 id="specs-title" className="product-page__section-title">
               Caractéristiques
             </h2>
           </div>
 
-          <dl className="product-specs">
-            {Object.entries(product.specs).map(([label, value]) => (
-              <div key={label} className="product-specs__row">
-                <dt>{label}</dt>
-                <dd>{value}</dd>
+          <div className={`product-accordion${specsOpen ? ' is-open' : ''}`}>
+            <button
+              type="button"
+              className="product-accordion__trigger"
+              aria-expanded={specsOpen}
+              aria-controls="specs-panel"
+              onClick={() => setSpecsOpen((open) => !open)}
+            >
+              <span>Fiche technique</span>
+              <ChevronDownIcon size={18} className="product-accordion__chevron" />
+            </button>
+            <div className="product-accordion__panel" id="specs-panel">
+              <div className="product-accordion__panel-inner">
+                <dl className="product-specs">
+                  {Object.entries(product.specs).map(([label, value]) => (
+                    <div key={label} className="product-specs__row">
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            ))}
-          </dl>
+            </div>
+          </div>
         </section>
       )}
 
@@ -285,24 +412,55 @@ export default function ProductDetailPage() {
           aria-labelledby="related-title"
         >
           <div className="product-page__section-head product-page__section-head--row">
-            <div>
-              <p className="product-page__section-kicker">Continuer</p>
-              <h2 id="related-title" className="product-page__section-title">
-                À découvrir aussi
-              </h2>
-            </div>
+            <h2 id="related-title" className="product-page__section-title">
+              À découvrir aussi
+            </h2>
             <Link to="/produits" className="text-link" viewTransition>
               Toute la boutique
               <ChevronRightIcon size={14} />
             </Link>
           </div>
 
-          <div className="product-grid product-grid--3">
-            {related.map((item) => (
-              <ProductCard key={item.id} product={item} />
-            ))}
+          <div className="product-rail" role="region" aria-label="Produits associés">
+            <div className="product-rail__track">
+              {related.map((item) => (
+                <ProductCard key={item.id} product={item} variant="lineup" />
+              ))}
+            </div>
           </div>
         </section>
+      )}
+
+      {/* Mobile buy bar — same action, always within thumb reach. */}
+      <div className="product-buybar">
+        <div className="product-buybar__price">
+          <span>{formatPrice(unitPrice)}</span>
+          <span className="product-buybar__note">Prix TTC</span>
+        </div>
+        <button
+          type="button"
+          className={`btn btn--primary product-buybar__cta${
+            added ? ' is-added' : ''
+          }`}
+          onClick={handleAdd}
+        >
+          {added ? (
+            <>
+              <CheckIcon size={16} strokeWidth={2.4} />
+              Ajouté
+            </>
+          ) : (
+            'Ajouter'
+          )}
+        </button>
+      </div>
+
+      {toast && (
+        <CartToast
+          key={toast.id}
+          productName={toast.name}
+          onClose={closeToast}
+        />
       )}
     </article>
   );

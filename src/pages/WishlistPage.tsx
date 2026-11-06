@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '../components/AppLink';
+import LineReveal from '../components/LineReveal';
 import ProductCard from '../components/ProductCard';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -97,7 +98,7 @@ export default function WishlistPage() {
           </nav>
 
           <span className="eyebrow">Votre sélection</span>
-          <h1 className="page-hero__title">Mes favoris</h1>
+          <LineReveal as="h1" className="page-hero__title" immediate lines={['Mes favoris']} />
           <p className="page-hero__desc">
             Gardez les produits qui vous intéressent sous la main, comparez-les
             puis ajoutez-les au panier quand votre choix est fait.

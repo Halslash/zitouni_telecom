@@ -3,16 +3,12 @@ import {
   useId,
   useRef,
   useState,
-  type FormEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Link } from './AppLink';
 import { AnimatePresence, m } from 'motion/react';
-import {
-  useMotionTokens,
-  useShouldReduceMotion,
-} from '@animate-ui/react/utils/motion';
+import { useShouldReduceMotion } from '@animate-ui/react/utils/motion';
 import { formatNumber } from '../lib/format';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -20,6 +16,8 @@ import BrandLockup from './BrandLockup';
 import { lockBodyScroll, unlockBodyScroll } from '../lib/scrollLock';
 import { lockAppInert, unlockAppInert } from '../lib/appInert';
 import { trapTabKey } from '../lib/focusTrap';
+import SearchPalette from './SearchPalette';
+import MiniCart from './MiniCart';
 import {
   ChevronRightIcon,
   CloseIcon,
@@ -30,88 +28,28 @@ import {
   UserIcon,
 } from './Icons';
 import HeaderNav from './HeaderNav';
-import { categories } from '../data/products';
-import { CATEGORY_PATHS } from '../data/products';
+import { categories, CATEGORY_PATHS, getProductsByCategory } from '../data/products';
 import { NavLink } from './AppLink';
 import './Header.css';
 
-function SearchForm({
-  className,
-  autoFocus = false,
-  onSubmitted,
-  viewTransition = true,
-}: {
-  className?: string;
-  autoFocus?: boolean;
-  onSubmitted?: () => void;
-  viewTransition?: boolean;
-}) {
-  const [query, setQuery] = useState('');
-  const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const inputId = useId();
-
-  useEffect(() => {
-    if (autoFocus) {
-      const timer = window.setTimeout(() => inputRef.current?.focus(), 40);
-      return () => window.clearTimeout(timer);
-    }
-  }, [autoFocus]);
-
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    const term = query.trim();
-    if (!term) return;
-    navigate(`/produits?q=${encodeURIComponent(term)}`, { viewTransition });
-    setQuery('');
-    onSubmitted?.();
-  };
-
-  return (
-    <form
-      className={`header-search${className ? ` ${className}` : ''}`}
-      role="search"
-      aria-label="Rechercher"
-      onSubmit={handleSubmit}
-    >
-      <SearchIcon size={16} className="header-search__icon" />
-      <label htmlFor={inputId} className="visually-hidden">
-        Rechercher
-      </label>
-      <input
-        ref={inputRef}
-        id={inputId}
-        className="header-search__input"
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Rechercher"
-        autoComplete="off"
-      />
-      <button
-        type="submit"
-        className="header-search__submit"
-        aria-label="Rechercher"
-      >
-        <span className="header-search__submit-label">Rechercher</span>
-        <ChevronRightIcon size={15} className="header-search__submit-icon" />
-      </button>
-    </form>
-  );
-}
+const DESKTOP_QUERY = '(min-width: 1120px)';
 
 export default function Header() {
   const { state } = useCart();
   const wishlist = useWishlist();
   const location = useLocation();
-  const { spring } = useMotionTokens();
   const reduceMotion = useShouldReduceMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const scrollSentinelRef = useRef<HTMLDivElement>(null);
+  const [miniCartOpen, setMiniCartOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const progressRef = useRef<HTMLSpanElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
+  const cartToggleRef = useRef<HTMLButtonElement>(null);
   const hasMounted = useRef(false);
   const drawerTitleId = useId();
 
@@ -127,26 +65,50 @@ export default function Header() {
   useEffect(() => {
     setMobileOpen(false);
     setSearchOpen(false);
+    setMiniCartOpen(false);
   }, [location.pathname, location.search]);
 
+  /* Desktop chrome: cart opens the slide-over, not the page. */
   useEffect(() => {
-    if (!searchOpen) return;
-    return () => searchToggleRef.current?.focus();
-  }, [searchOpen]);
+    const query = window.matchMedia(DESKTOP_QUERY);
+    const apply = () => setIsDesktop(query.matches);
+    apply();
+    query.addEventListener('change', apply);
+    return () => query.removeEventListener('change', apply);
+  }, []);
 
+  /* Scroll state + progress line, both written inside one rAF callback. */
   useEffect(() => {
-    if (!searchOpen) return undefined;
+    let frame = 0;
+    let pending = false;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        setSearchOpen(false);
-      }
+    const update = () => {
+      pending = false;
+      const scrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+      setIsScrolled(window.scrollY > 8);
+      progressRef.current?.style.setProperty(
+        'transform',
+        `scaleX(${progress.toFixed(4)})`
+      );
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [searchOpen]);
+    const onScroll = () => {
+      if (pending) return;
+      pending = true;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -184,13 +146,11 @@ export default function Header() {
 
   return (
     <>
-      <div
-        ref={scrollSentinelRef}
-        className="header-sentinel"
-        aria-hidden="true"
-      />
-
-      <header className="site-header site-header--slim">
+      <header
+        className={`site-header site-header--island${
+          isScrolled ? ' is-scrolled' : ''
+        }`}
+      >
         <div className="container site-header__main">
           <div className="site-header__left">
             <button
@@ -213,10 +173,11 @@ export default function Header() {
               ref={searchToggleRef}
               type="button"
               className="header-icon-btn header-icon-btn--search"
-              onClick={() => setSearchOpen((open) => !open)}
+              onClick={() => setSearchOpen(true)}
+              aria-haspopup="dialog"
               aria-expanded={searchOpen}
-              aria-controls="header-search-panel"
-              aria-label={searchOpen ? 'Fermer la recherche' : 'Rechercher'}
+              aria-controls="search-palette"
+              aria-label="Rechercher"
             >
               <SearchIcon size={18} />
             </button>
@@ -239,7 +200,7 @@ export default function Header() {
                         : false
                     }
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={spring.pop}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   >
                     {formatNumber(wishlist.count)}
                   </m.span>
@@ -258,61 +219,77 @@ export default function Header() {
               </span>
             </Link>
 
-            <Link
-              to="/panier"
-              className="header-icon-btn header-icon-btn--cart"
-              aria-label={
-                itemCount > 0 ? `Panier, ${itemCount} article(s)` : 'Panier'
-              }
-              viewTransition
-            >
-              <span className="header-icon-btn__icon">
-                <ShoppingBagIcon size={18} />
-                {itemCount > 0 && (
-                  <m.span
-                    key={itemCount}
-                    className="count-badge header-icon-btn__badge"
-                    initial={
-                      hasMounted.current && !reduceMotion
-                        ? { opacity: 0.5, scale: 0.8 }
-                        : false
-                    }
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={spring.pop}
-                  >
-                    {formatNumber(itemCount)}
-                  </m.span>
-                )}
-              </span>
-            </Link>
+            {isDesktop ? (
+              <button
+                ref={cartToggleRef}
+                type="button"
+                className="header-icon-btn header-icon-btn--cart"
+                onClick={() => setMiniCartOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={miniCartOpen}
+                aria-controls="mini-cart"
+                aria-label={
+                  itemCount > 0 ? `Panier, ${itemCount} article(s)` : 'Panier'
+                }
+              >
+                <span className="header-icon-btn__icon">
+                  <ShoppingBagIcon size={18} />
+                  {itemCount > 0 && (
+                    <m.span
+                      key={itemCount}
+                      className="count-badge header-icon-btn__badge"
+                      initial={
+                        hasMounted.current && !reduceMotion
+                          ? { opacity: 0.5, scale: 0.8 }
+                          : false
+                      }
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {formatNumber(itemCount)}
+                    </m.span>
+                  )}
+                </span>
+              </button>
+            ) : (
+              <Link
+                to="/panier"
+                className="header-icon-btn header-icon-btn--cart"
+                aria-label={
+                  itemCount > 0 ? `Panier, ${itemCount} article(s)` : 'Panier'
+                }
+                viewTransition
+              >
+                <span className="header-icon-btn__icon">
+                  <ShoppingBagIcon size={18} />
+                  {itemCount > 0 && (
+                    <m.span
+                      key={itemCount}
+                      className="count-badge header-icon-btn__badge"
+                      initial={
+                        hasMounted.current && !reduceMotion
+                          ? { opacity: 0.5, scale: 0.8 }
+                          : false
+                      }
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {formatNumber(itemCount)}
+                    </m.span>
+                  )}
+                </span>
+              </Link>
+            )}
           </div>
         </div>
-      </header>
 
-      <AnimatePresence>
-        {searchOpen && (
-          <m.div
-            id="header-search-panel"
-            className="header-search-panel"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
-            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
-            transition={{ duration: reduceMotion ? 0.12 : 0.2 }}
-          >
-            <div className="container header-search-panel__inner">
-              <SearchForm autoFocus onSubmitted={() => setSearchOpen(false)} />
-              <button
-                type="button"
-                className="header-search-panel__close"
-                onClick={() => setSearchOpen(false)}
-                aria-label="Fermer la recherche"
-              >
-                <CloseIcon size={16} />
-              </button>
-            </div>
-          </m.div>
-        )}
-      </AnimatePresence>
+        {/* Wine scroll-progress line along the island's bottom edge. */}
+        <span
+          ref={progressRef}
+          className="site-header__progress"
+          aria-hidden="true"
+        />
+      </header>
 
       {createPortal(
         <AnimatePresence>
@@ -333,10 +310,14 @@ export default function Header() {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={drawerTitleId}
-                initial={{ x: '-100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ duration: reduceMotion ? 0.12 : 0.25, ease: [0, 0, 0.5, 1] }}
+                initial={reduceMotion ? { opacity: 0, x: 0 } : { x: '-100%' }}
+                animate={reduceMotion ? { opacity: 1, x: 0 } : { x: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { x: '-100%' }}
+                transition={
+                  reduceMotion
+                    ? { duration: 0.12 }
+                    : { duration: 0.28, ease: [0.32, 0.72, 0.3, 1] }
+                }
               >
                 <header className="mobile-drawer__header">
                   <h2 id={drawerTitleId} className="mobile-drawer__title">
@@ -353,28 +334,77 @@ export default function Header() {
                   </button>
                 </header>
                 <div className="mobile-drawer__search">
-                  <SearchForm
-                    onSubmitted={() => setMobileOpen(false)}
-                    viewTransition={false}
-                  />
+                  <button
+                    type="button"
+                    className="mobile-drawer__search-btn"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setSearchOpen(true);
+                    }}
+                  >
+                    <SearchIcon size={18} />
+                    Rechercher un produit…
+                  </button>
                 </div>
                 <nav className="mobile-drawer__nav" aria-label="Navigation mobile">
                   <p className="mobile-drawer__label">Boutique</p>
                   <ul className="mobile-nav__list">
-                    {categories.map((category) => (
-                      <li key={category.id}>
-                        <NavLink
-                          to={CATEGORY_PATHS[category.id]}
-                          className={({ isActive }) =>
-                            `mobile-nav__link${isActive ? ' is-active' : ''}`
-                          }
-                          viewTransition
+                    {categories.map((category) => {
+                      const categoryProducts = getProductsByCategory(
+                        category.id
+                      );
+                      const open = openCategory === category.id;
+                      return (
+                        <li
+                          key={category.id}
+                          className="mobile-nav__item"
+                          data-open={open || undefined}
                         >
-                          <span>{category.name}</span>
-                          <ChevronRightIcon size={16} />
-                        </NavLink>
-                      </li>
-                    ))}
+                          <button
+                            type="button"
+                            className="mobile-nav__summary"
+                            onClick={() =>
+                              setOpenCategory(open ? null : category.id)
+                            }
+                            aria-expanded={open}
+                          >
+                            <span>{category.name}</span>
+                            <ChevronRightIcon size={18} />
+                          </button>
+                          <div className="mobile-nav__sub">
+                            <div className="mobile-nav__sub-inner">
+                              <ul>
+                                <li>
+                                  <NavLink
+                                    to={CATEGORY_PATHS[category.id]}
+                                    viewTransition
+                                    onClick={() =>
+                                      setMobileOpen(false)
+                                    }
+                                  >
+                                    Tous les{' '}
+                                    {category.name.toLowerCase()}
+                                  </NavLink>
+                                </li>
+                                {categoryProducts.map((product) => (
+                                  <li key={product.id}>
+                                    <NavLink
+                                      to={`/produit/${product.id}`}
+                                      viewTransition
+                                      onClick={() =>
+                                        setMobileOpen(false)
+                                      }
+                                    >
+                                      {product.name}
+                                    </NavLink>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
 
                   <p className="mobile-drawer__label">Mon espace</p>
@@ -411,6 +441,20 @@ export default function Header() {
         </AnimatePresence>,
         document.body
       )}
+
+      <SearchPalette
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        restoreFocusRef={searchToggleRef}
+      />
+
+      <MiniCart
+        open={miniCartOpen}
+        onClose={() => setMiniCartOpen(false)}
+        restoreFocusRef={cartToggleRef}
+      />
     </>
   );
 }
+
+export { DESKTOP_QUERY };
